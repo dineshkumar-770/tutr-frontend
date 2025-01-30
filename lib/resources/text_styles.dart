@@ -15,7 +15,7 @@ class CustomTextStylesAndDecorations {
     );
   }
 
-  static TextStyle primaryButtonTextStyle(){
-    return  GoogleFonts.lato(fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.buttonTextColor);
+  static TextStyle primaryButtonTextStyle() {
+    return GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.buttonTextColor);
   }
 }

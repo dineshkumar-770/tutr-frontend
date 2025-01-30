@@ -9,6 +9,10 @@ abstract class AppColors {
   static Color textColor1 = getTextColor();
   static Color textColor2 = getTextColor();
   static Color textColor3 = getTextColor();
+  static Color textColorLightBlack = Colors.black45;
+  static Color primaryColor = Colors.teal;
+
+  static Color loadingIndicatorColor = Colors.blue;
 
   static Color primaryButtonColor = Colors.black;
   static Color buttonTextColor = Colors.white;
@@ -20,6 +24,7 @@ abstract class AppColors {
   static Color black = Colors.black;
   static Color white = Colors.white;
   static Color dividerColor = Colors.transparent;
+  static Color dividerColor2 = Colors.black38;
 
   // Reading Background Colors
   static Color softGrayBackground = const Color(0xffF5F5F5); // Soft Light Gray

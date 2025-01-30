@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tutr/common/custom_appbar.dart';
 import 'package:tutr/common/custom_button.dart';
 import 'package:tutr/common/custom_loading_widget.dart';
+import 'package:tutr/common/custom_message_widget.dart';
 import 'package:tutr/common/custom_textfield.dart';
 import 'package:tutr/features/auth/controller/auth_controller.dart';
 import 'package:tutr/features/auth/controller/auth_states.dart';
@@ -53,26 +54,23 @@ class LoginScreen extends ConsumerWidget {
               ),
               Gaps.verticalGap(value: 10),
               RichText(
-                text: TextSpan(
-                    text: "Don't have an Account? ",
-                    style: GoogleFonts.lato(color: AppColors.textColor1),
-                    children: [
-                      TextSpan(
-                        text: " Create Account",
-                        style: GoogleFonts.lato(color: AppColors.textButtonTextColor),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            providerFunc.getAllTeachersList();
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => RegisterScreen(
-                                    registerType: loginType,
-                                  ),
-                                ));
-                          },
-                      )
-                    ]),
+                text: TextSpan(text: "Don't have an Account? ", style: GoogleFonts.lato(color: AppColors.textColor1), children: [
+                  TextSpan(
+                    text: " Create Account",
+                    style: GoogleFonts.lato(color: AppColors.textButtonTextColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        providerFunc.getAllTeachersList();
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => RegisterScreen(
+                                registerType: loginType,
+                              ),
+                            ));
+                      },
+                  )
+                ]),
               ),
             ] else if (authStates.loginActiveStep == 1) ...[
               EmailOtpWidget(
@@ -84,15 +82,26 @@ class LoginScreen extends ConsumerWidget {
             Spacer(),
             CustomButton(
                 onTap: () {
-                  // providerFunc.changeActiveStep(1);
-                  providerFunc.sendEmailOTP();
-
-                  // CustomSnackbar.show(
-                  //   context: context,
-                  //   message: providerFunc.emailController.text,
-                  // );
+                  switch (authStates.loginActiveStep) {
+                    case 0:
+                      if (providerFunc.emailController.text.isEmpty) {
+                        CustomSnackbar.show(context: context, message: "Email is Required!", isSuccess: false);
+                      } else {
+                        providerFunc.sendEmailOTP(
+                            loginType: loginType, email: providerFunc.emailController.text, context: context);
+                      }
+                      break;
+                    case 1:
+                      providerFunc.verifyEmailOTP(
+                          context: context,
+                          email: providerFunc.emailController.text,
+                          loginType: loginType,
+                          otp: providerFunc.emailOTPController.text);
+                      break;
+                    default:
+                  }
                 },
-                label: authStates.sendOTPLoading
+                label: (authStates.sendOTPLoading || authStates.verifyOTPLoading)
                     ? CustomLoadingWidget()
                     : Text(
                         authStates.loginActiveStep == 1 ? "Verify" : "Login",

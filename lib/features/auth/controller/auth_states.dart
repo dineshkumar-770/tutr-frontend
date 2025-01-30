@@ -13,6 +13,7 @@ class AuthStates extends Equatable {
   final bool getTeachersLoading;
   final TeachersData selectedTeacher;
   final AllTeachersModel allTeachersModelData;
+  final bool verifyOTPLoading;
 
   const AuthStates({
     required this.sendOTPLoading,
@@ -23,6 +24,7 @@ class AuthStates extends Equatable {
     required this.getTeachersLoading,
     required this.selectedTeacher,
     required this.allTeachersModelData,
+    required this.verifyOTPLoading,
   });
 
   factory AuthStates.initiate() {
@@ -31,6 +33,7 @@ class AuthStates extends Equatable {
         loginActiveStep: 0,
         registerLoading: false,
         selectedTeacher: TeachersData(),
+        verifyOTPLoading: false,
         getTeachersLoading: false,
         allTeachersModelData: AllTeachersModel(response: [], message: "", status: ConstantStrings.failed),
         selectedClass: "9TH",
@@ -48,6 +51,7 @@ class AuthStates extends Equatable {
       getTeachersLoading,
       selectedTeacher,
       allTeachersModelData,
+      verifyOTPLoading,
     ];
   }
 
@@ -60,6 +64,7 @@ class AuthStates extends Equatable {
     bool? getTeachersLoading,
     TeachersData? selectedTeacher,
     AllTeachersModel? allTeachersModelData,
+    bool? verifyOTPLoading,
   }) {
     return AuthStates(
       sendOTPLoading: sendOTPLoading ?? this.sendOTPLoading,
@@ -70,6 +75,7 @@ class AuthStates extends Equatable {
       getTeachersLoading: getTeachersLoading ?? this.getTeachersLoading,
       selectedTeacher: selectedTeacher ?? this.selectedTeacher,
       allTeachersModelData: allTeachersModelData ?? this.allTeachersModelData,
+      verifyOTPLoading: verifyOTPLoading ?? this.verifyOTPLoading,
     );
   }
 }

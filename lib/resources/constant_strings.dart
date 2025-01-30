@@ -13,5 +13,5 @@ class ConstantStrings {
   static const String failed = "failed";
   static const String success = "success";
   static const String serverError = "Server is acting up.Please try again later";
-
+  static const String tokenKey = "authtoken";
 }

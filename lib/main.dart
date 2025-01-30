@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutr/core/riverpod_observer.dart';
-import 'package:tutr/features/root_page/view/welcome_screen.dart';
+import 'package:tutr/features/root_page/view/splash_screen.dart';
 import 'package:tutr/utils/shared_prefs.dart';
 
 void main() async {
@@ -24,6 +24,6 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const WelcomeScreen());
+        home: const SplashScreen());
   }
 }

@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.useWidgetOnTitle,
       this.actions,
       this.centerTitle,
+      this.leadingWidget,
       this.titleWidget});
   final AppBar appBar;
   final String title;
@@ -17,6 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? titleWidget;
   final bool? centerTitle;
   final List<Widget>? actions;
+  final Widget? leadingWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +28,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: centerTitle,
         actions: actions,
         automaticallyImplyLeading: false,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios_new)),
+        leading: leadingWidget ??
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios_new)),
         title: (useWidgetOnTitle ?? false)
             ? titleWidget
             : Text(
                 title,
-                style: const TextStyle(color: Colors.black, fontSize: 30),
+                style: const TextStyle(color: Colors.black, fontSize: 25),
               ));
   }
 
