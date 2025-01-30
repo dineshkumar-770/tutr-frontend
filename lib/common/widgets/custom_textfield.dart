@@ -61,6 +61,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   enabled: widget.enable,
                   maxLines: widget.maxLines ?? 1,
                   keyboardType: widget.textInputType,
+                  textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     suffix: widget.suffix,
                     hintText: widget.hint,
@@ -84,6 +85,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           )
                         : Visibility(visible: widget.isPasswordField ?? false, child: const Icon(Icons.abc)),
                     enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Color(0xFFBAC2C7),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    disabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(
                         color: Color(0xFFBAC2C7),
                         width: 1,
@@ -140,6 +148,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   maxLines: widget.maxLines ?? 1,
                   enabled: widget.enable,
                   keyboardType: widget.textInputType,
+                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
                     suffix: widget.suffix,
                     hintText: widget.hint,
@@ -149,6 +158,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           fontSize: 14,
                         ),
                     enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Color(0xFFBAC2C7),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    disabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(
                         color: Color(0xFFBAC2C7),
                         width: 1,

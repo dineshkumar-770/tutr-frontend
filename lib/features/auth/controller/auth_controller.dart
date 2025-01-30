@@ -3,12 +3,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tutr/common/custom_message_widget.dart';
+import 'package:tutr/common/widgets/custom_message_widget.dart';
+import 'package:tutr/core/repositories/api_call.dart';
 import 'package:tutr/features/auth/controller/auth_states.dart';
-import 'package:tutr/features/auth/models/all_teachers_model.dart';
-import 'package:tutr/resources/constant_strings.dart';
-import 'package:tutr/service/api_calls.dart';
-import 'package:tutr/service/api_result.dart';
+import 'package:tutr/models/auth_models/all_teachers_model.dart';
+import 'package:tutr/common/constants/constant_strings.dart'; 
+import 'package:tutr/utils/api_result.dart';
 
 final authNotifierProvider = StateNotifierProvider.autoDispose<AuthNotifier, AuthStates>((ref) {
   return AuthNotifier();

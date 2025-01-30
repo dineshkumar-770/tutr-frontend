@@ -1,27 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tutr/common/custom_appbar.dart';
-import 'package:tutr/common/custom_button.dart';
-import 'package:tutr/common/custom_loading_widget.dart';
-import 'package:tutr/common/custom_textfield.dart';
+import 'package:tutr/common/constants/app_colors.dart';
+import 'package:tutr/common/constants/text_styles.dart';
+import 'package:tutr/common/widgets/custom_appbar.dart';
+import 'package:tutr/common/widgets/custom_button.dart';
+import 'package:tutr/common/widgets/custom_loading_widget.dart';
+import 'package:tutr/common/widgets/custom_textfield.dart';
+import 'package:tutr/common/widgets/gaps.dart';
 import 'package:tutr/features/auth/controller/auth_controller.dart';
 import 'package:tutr/features/auth/controller/auth_states.dart';
-import 'package:tutr/features/auth/views/register_screen.dart';
-import 'package:tutr/features/auth/widgets/email_otp_widget.dart';
 import 'package:tutr/helpers/extensions.dart';
-import 'package:tutr/helpers/gaps.dart';
-import 'package:tutr/resources/app_colors.dart';
-import 'package:tutr/resources/text_styles.dart';
+import 'package:tutr/models/route_arguments/auth_arguments.dart';
+import 'package:tutr/routes/route_names.dart';
+import 'package:tutr/views/widgets/auth_widgets/email_otp_widget.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({
     super.key,
-    required this.loginType,
+    required this.authType,
   });
-  final String loginType;
+  final UserAuthType authType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,11 +37,11 @@ class LoginScreen extends ConsumerWidget {
           children: [
             if (authStates.loginActiveStep == 0) ...[
               Text(
-                "You are a  ${loginType.capitalizeFirst()}. . . .",
+                "You are a  ${authType.authType.capitalizeFirst()}. . . .",
                 style: GoogleFonts.lato(color: AppColors.textColor1, fontSize: 30, fontWeight: FontWeight.w600),
               ),
               Text(
-                "Enter your email to login as ${loginType.capitalizeFirst()}",
+                "Enter your email to login as ${authType.authType.capitalizeFirst()}",
                 style: GoogleFonts.lato(color: AppColors.textColor1, fontSize: 30, fontWeight: FontWeight.w600),
               ),
               Gaps.verticalGap(value: 20),
@@ -63,13 +63,7 @@ class LoginScreen extends ConsumerWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             providerFunc.getAllTeachersList();
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => RegisterScreen(
-                                    registerType: loginType,
-                                  ),
-                                ));
+                            Navigator.pushNamed(context, RouteNames.registerStudent, arguments: authType);
                           },
                       )
                     ]),

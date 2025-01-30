@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
-import 'package:tutr/features/auth/models/all_teachers_model.dart';
-import 'package:tutr/resources/constant_strings.dart';
+import 'package:tutr/models/auth_models/all_teachers_model.dart';
+import 'package:tutr/common/constants/constant_strings.dart';
 
 class AuthStates extends Equatable {
   final bool sendOTPLoading;

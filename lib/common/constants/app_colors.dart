@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tutr/resources/constant_strings.dart';
-import 'package:tutr/utils/shared_prefs.dart';
+import 'package:tutr/common/constants/constant_strings.dart';
+import 'package:tutr/core/singletons/shared_prefs.dart';
 
 abstract class AppColors {
   static Color backgroundColor = getBackGroundColor();

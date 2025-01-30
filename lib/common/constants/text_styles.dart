@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tutr/resources/app_colors.dart';
+import 'package:tutr/common/constants/app_colors.dart';
 
 class CustomTextStylesAndDecorations {
   static InputDecoration getDropDownDecoration() {

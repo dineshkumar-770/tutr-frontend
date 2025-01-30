@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tutr/features/auth/controller/auth_controller.dart';
 import 'package:tutr/helpers/extensions.dart';
-import 'package:tutr/helpers/gaps.dart';
-import 'package:tutr/resources/app_colors.dart';
+import 'package:tutr/common/widgets/gaps.dart';
+import 'package:tutr/common/constants/app_colors.dart';
 
 class EmailOtpWidget extends StatelessWidget {
   const EmailOtpWidget({super.key, required this.otpController});

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:tutr/resources/constant_strings.dart';
+import 'package:tutr/common/constants/constant_strings.dart';
 import 'package:tutr/routes/api_endpoints.dart';
-import 'package:tutr/service/api_result.dart';
+import 'package:tutr/utils/api_result.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:tutr/utils/http_singelton.dart';
+import 'package:tutr/core/singletons/http_singelton.dart';
 
 class ApiCalls {
   Result evaluateResponse(http.Response apiResponse) {

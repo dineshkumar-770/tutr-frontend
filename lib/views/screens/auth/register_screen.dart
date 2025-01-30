@@ -1,20 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tutr/common/custom_appbar.dart';
-import 'package:tutr/common/custom_button.dart';
-import 'package:tutr/common/custom_loading_widget.dart';
-import 'package:tutr/common/custom_textfield.dart';
+import 'package:tutr/common/widgets/custom_appbar.dart';
+import 'package:tutr/common/widgets/custom_button.dart';
+import 'package:tutr/common/widgets/custom_loading_widget.dart';
+import 'package:tutr/common/widgets/custom_textfield.dart';
 import 'package:tutr/features/auth/controller/auth_controller.dart';
-import 'package:tutr/features/auth/models/all_teachers_model.dart';
-import 'package:tutr/resources/text_styles.dart';
+import 'package:tutr/helpers/extensions.dart';
+import 'package:tutr/models/auth_models/all_teachers_model.dart';
+import 'package:tutr/common/constants/text_styles.dart';
+import 'package:tutr/models/route_arguments/auth_arguments.dart';
 
 class RegisterScreen extends ConsumerWidget {
   const RegisterScreen({
     super.key,
     required this.registerType,
   });
-  final String registerType;
+  final UserAuthType registerType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,18 +32,27 @@ class RegisterScreen extends ConsumerWidget {
             spacing: 20,
             children: [
               CustomTextField(
+                label: "Register Type",
+                hint: "Enter your full name",
+                enable: false,
+                controller: TextEditingController(text: registerType.authType.capitalizeFirst()),
+              ),
+              CustomTextField(
                 label: "Full Name",
                 hint: "Enter your full name",
+                textInputType: TextInputType.name,
                 controller: providerFunc.fullNameController,
               ),
               CustomTextField(
                 label: "Email",
                 hint: "Enter your email",
+                textInputType: TextInputType.emailAddress,
                 controller: providerFunc.studentEmailController,
               ),
               CustomTextField(
                 label: "Student Phone Number",
                 hint: "Enter student's phone number",
+                textInputType: TextInputType.phone,
                 controller: providerFunc.studentContactController,
               ),
               Column(

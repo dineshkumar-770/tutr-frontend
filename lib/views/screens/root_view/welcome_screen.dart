@@ -1,12 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:tutr/common/custom_button.dart';
-import 'package:tutr/features/auth/views/login_screen.dart';
-import 'package:tutr/resources/app_colors.dart';
-import 'package:tutr/resources/constant_strings.dart';
-import 'package:tutr/resources/text_styles.dart';
+import 'package:tutr/common/constants/app_colors.dart';
+import 'package:tutr/common/constants/constant_strings.dart';
+import 'package:tutr/common/constants/text_styles.dart';
+import 'package:tutr/common/widgets/custom_button.dart';
+import 'package:tutr/models/route_arguments/auth_arguments.dart';
+import 'package:tutr/routes/route_names.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -38,11 +38,8 @@ class WelcomeScreen extends StatelessWidget {
               ),
               height: 50,
               onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => LoginScreen(loginType: ConstantStrings.teacher),
-                    ));
+                Navigator.pushNamed(context, RouteNames.loginTeacher,
+                    arguments: UserAuthType(authType: ConstantStrings.teacher));
               },
             ),
             CustomButton(
@@ -52,11 +49,8 @@ class WelcomeScreen extends StatelessWidget {
               ),
               height: 50,
               onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => LoginScreen(loginType: ConstantStrings.student),
-                    ));
+                Navigator.pushNamed(context, RouteNames.loginStudent,
+                    arguments: UserAuthType(authType: ConstantStrings.student));
               },
             )
           ],

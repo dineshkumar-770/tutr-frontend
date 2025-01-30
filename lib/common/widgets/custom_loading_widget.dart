@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tutr/resources/app_colors.dart';
+import 'package:tutr/common/constants/app_colors.dart';
 
 class CustomLoadingWidget extends StatelessWidget {
   const CustomLoadingWidget({super.key});
