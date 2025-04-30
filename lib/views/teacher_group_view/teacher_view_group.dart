@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
@@ -85,10 +86,20 @@ class _TeacherViewGroupState extends State<TeacherViewGroup> with TickerProvider
                             groupId: widget.teacherViewGroupArguments.groupId));
                     context.read<TeacherViewGroupBloc>().add(
                         FetchGroupMaterialNotes(context: context, groupId: widget.teacherViewGroupArguments.groupId));
-                  
+
                   case 4:
-                  Navigator.pushNamed(context,AppRouteNames.teacherAttendanceScreen,arguments: TeacherAttendanceArgs(groupId: widget.teacherViewGroupArguments.groupId));
-                  log(Prefs.getString(ConstantStrings.userToken));
+                    Navigator.pushNamed(context, AppRouteNames.teacherAttendanceScreen,
+                        arguments: TeacherAttendanceArgs(groupId: widget.teacherViewGroupArguments.groupId));
+                    log(Prefs.getString(ConstantStrings.userToken));
+                    context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                        count: 30,
+                        page: 1,
+                        endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                        startDate:
+                            DateFormat("dd-MM-yyyy 00:00:00").format(DateTime.now().subtract(const Duration(days: 30))),
+                        groupId: widget.teacherViewGroupArguments.groupId,
+                        studentId: null,
+                        teacherId: widget.teacherViewGroupArguments.teacherId));
                   default:
                 }
               },

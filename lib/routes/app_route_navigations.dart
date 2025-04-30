@@ -4,6 +4,7 @@ import 'package:tutr_frontend/models/arguments/class_material_args.dart';
 import 'package:tutr_frontend/models/arguments/invite_memeber_args.dart';
 import 'package:tutr_frontend/models/arguments/preview_notes_args.dart';
 import 'package:tutr_frontend/models/arguments/studnets_list_args.dart';
+import 'package:tutr_frontend/models/arguments/take_attendance_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_attendance_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_view_group_arguments.dart';
 import 'package:tutr_frontend/models/arguments/upload_notes_study_material_args.dart';
@@ -92,6 +93,11 @@ class AppRoutesNavigation with AppRoutesGeneration {
         return CupertinoPageRoute(
           builder: (context) =>
               routes[AppRouteNames.teacherAttendanceScreen]!(context, settings.arguments as TeacherAttendanceArgs),
+        );
+      case AppRouteNames.takeAttendanceScreen:
+        return CupertinoPageRoute(
+          builder: (context) =>
+              routes[AppRouteNames.takeAttendanceScreen]!(context, settings.arguments as TakeAttendanceArgs),
         );
 
       default:

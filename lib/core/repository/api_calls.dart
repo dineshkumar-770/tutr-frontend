@@ -534,11 +534,58 @@ class ApiCalls {
   }
 
   Future<Either<Map<String, dynamic>, String>> getStudentAttendance(
-      {required String groupId, required int count, required int pageNumber}) async {
+      {required String groupId,
+      required int count,
+      required int pageNumber,
+      required String startDate,
+      required String endDate,
+      required String? studentId,
+      required String teacherId}) async {
     try {
       String endpoint = "${ApiEndpoints.takeStudentAttendance}?group_id=$groupId&count=$count&page=$pageNumber";
+      Map<String, dynamic> formData = {
+        "start_date": startDate,
+        "end_date": endDate,
+        "teacher_id": teacherId,
+      };
+      if (studentId != null) {
+        formData.addAll({"student_id": studentId});
+      }
+      http.Response apiResponse =
+          await HttpHelper.requrestPOST(url: endpoint, headers: headersWithToken(), body: formData);
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
 
-      http.Response apiResponse = await HttpHelper.requestGET(url: endpoint, headers: headersWithToken());
+  Future<Either<Map<String, dynamic>, String>> saveGroupAttendance(
+      {required String groupID,
+      required String remarks,
+      required List<Map<String, dynamic>> markedAttendanceList}) async {
+    try {
+      String endpoint = ApiEndpoints.markAttendance;
+      Map<String, dynamic> formData = {
+        "group_id": groupID,
+        "remarks": remarks,
+        "marked_attendance": markedAttendanceList
+      };
+
+      http.Response apiResponse =
+          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
+
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);

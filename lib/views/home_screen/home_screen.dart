@@ -70,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   teacherName: (group?.allMembers != null && (group?.allMembers?.isNotEmpty ?? false))
                                       ? (group?.allMembers?[0].groupOwnerName ?? "")
                                       : (group?.groupName ?? ""),
+                                  teacherId: group?.teacherId ?? "",
                                   className: group?.groupClass ?? ""));
 
                          

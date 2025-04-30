@@ -14,6 +14,7 @@ class ApiEndpoints {
   //attendance
   static String takeStudentAttendance = "$_baseURL/get_attendance_record";
   static String markAttendance = "$_baseURL/mark_attendance";
+  static String editAttendanceRecord = "$_baseURL/edit_attendance_record";
 
   //groups
   static String createGroup = "$_baseURL/create_group";
@@ -35,7 +36,7 @@ class ApiEndpoints {
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://cb23-160-191-74-186.ngrok-free.app";
+      return "https://756e-160-191-74-141.ngrok-free.app";
     }
     return "";
   }

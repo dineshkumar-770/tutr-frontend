@@ -40,4 +40,8 @@ abstract class AppColors {
   static Color darkModeBackground = Colors.black; // Deep Black
   static Color darkModeText = const Color(0xffE0E0E0); // Light Gray
   static Color red = Colors.red; // Light Gray
+  static Color absentColor = Color(0xFFEE5555); // Red (Alert)
+  static Color presentColor = Color(0xFF53A03E); // Green (Positive)
+  static Color leaveColor = Color(0xFF7E52AE); // Golden Yellow (Noticeable)
+  static Color lateColor = Color(0xFFFB9548);
 }

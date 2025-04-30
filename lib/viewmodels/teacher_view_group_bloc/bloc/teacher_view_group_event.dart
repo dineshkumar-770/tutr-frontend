@@ -209,12 +209,57 @@ class CheckBeforeInviteStudentEvent extends TeacherViewGroupEvent {
       ];
 }
 
-class FetchGroupStudentsAttendanceEvent extends TeacherViewGroupEvent {
+class SaveStudensAttendanceEvent extends TeacherViewGroupEvent {
+  final List<Map<String, dynamic>> markedAttendanceList;
   final String groupId;
-  final int pageCount;
-  final int pageNumber;
+  final String remarks;
+  final BuildContext context;
 
-  const FetchGroupStudentsAttendanceEvent({required this.groupId, required this.pageCount, required this.pageNumber});
+  const SaveStudensAttendanceEvent({
+    required this.markedAttendanceList,
+    required this.groupId,
+    required this.remarks,
+    required this.context,
+  });
+
   @override
-  List<Object> get props => [groupId, pageCount, pageNumber];
+  List<Object> get props => [markedAttendanceList, groupId, remarks, context];
+}
+
+class MarkAttendanceEvent extends TeacherViewGroupEvent {
+  final Map<String, dynamic> attendanceRecord;
+
+  const MarkAttendanceEvent({required this.attendanceRecord});
+
+  @override
+  List<Object> get props => [attendanceRecord];
+}
+
+class GetAttendanceRecordsEvent extends TeacherViewGroupEvent {
+  final String groupId;
+  final int page;
+  final int count;
+  final String startDate;
+  final String endDate;
+  final String teacherId;
+  final String? studentId;
+
+  const GetAttendanceRecordsEvent(
+      {required this.groupId,
+      required this.page,
+      required this.count,
+      required this.startDate,
+      required this.endDate,
+      required this.teacherId,
+      required this.studentId});
+  @override
+  List<Object> get props => [
+        groupId,
+        page,
+        count,
+        startDate,
+        endDate,
+        teacherId,
+        studentId ?? "",
+      ];
 }

@@ -9,11 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:toastification/toastification.dart';
+import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/custom_toast.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/repository/api_calls.dart';
+import 'package:tutr_frontend/models/teacher_view_group_models/calender_view_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/check_stduent_brfore_invite.dart';
+import 'package:tutr_frontend/models/teacher_view_group_models/get_attendance_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/group_material_notes_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/group_members_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/group_notice_model.dart';
@@ -36,6 +39,9 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<FetchuserContactsListEvent>(fetchLargeContacts);
     on<CheckBeforeInviteStudentEvent>(checkStudentExistBeforeInvite);
     on<DeleteClassMaterialEvent>(deleteClassMaterialNotes);
+    on<MarkAttendanceEvent>(markAttendanceRecord);
+    on<SaveStudensAttendanceEvent>(saveStudensAttendance);
+    on<GetAttendanceRecordsEvent>(fetchAttendanceRecords);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();
@@ -488,6 +494,120 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
         emit(state.copyWith(
             deleteNotesError: err, deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
         CustomToast.show(toastType: ToastificationType.error, context: event.context, title: err);
+      },
+    );
+  }
+
+  void markAttendanceRecord(MarkAttendanceEvent event, Emitter<TeacherViewGroupState> emit) {
+    List<Map<String, dynamic>> attendanceRecord = List.from(state.markedAttendanceList);
+
+    final existingIndex = attendanceRecord.indexWhere(
+      (element) => element["student_id"] == event.attendanceRecord["student_id"],
+    );
+
+    if (existingIndex != -1) {
+      // Student already exists
+      if (attendanceRecord[existingIndex]["status"] != event.attendanceRecord["status"]) {
+        // Status is different -> Update record
+        attendanceRecord[existingIndex] = event.attendanceRecord;
+      }
+    } else {
+      // Student not in list -> Add new record
+      attendanceRecord.add(event.attendanceRecord);
+    }
+    emit(state.copyWith(markedAttendanceList: attendanceRecord));
+
+    log(state.markedAttendanceList.toString());
+  }
+
+  Future<void> saveStudensAttendance(SaveStudensAttendanceEvent event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(saveAttendanceLoading: true, saveAttendanceError: ""));
+    final response = await _apiCalls.saveGroupAttendance(
+        groupID: event.groupId, remarks: event.remarks, markedAttendanceList: event.markedAttendanceList);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          CustomToast.show(
+              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          emit(state.copyWith(saveAttendanceError: "", saveAttendanceLoading: false));
+        } else {
+          CustomToast.show(
+              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          emit(state.copyWith(saveAttendanceError: data["message"].toString(), saveAttendanceLoading: false));
+        }
+      },
+      (error) {
+        emit(state.copyWith(saveAttendanceError: error, saveAttendanceLoading: false));
+      },
+    );
+  }
+
+  Future<void> fetchAttendanceRecords(GetAttendanceRecordsEvent event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(
+        fetchAttendanceRecordsLoading: true,
+        attendanceRecordError: "",
+        attendanceRecordsData: GetAttendanceRecordsModel()));
+
+    final response = await _apiCalls.getStudentAttendance(
+        groupId: event.groupId,
+        count: event.count,
+        pageNumber: event.page,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        studentId: event.studentId,
+        teacherId: event.teacherId);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          GetAttendanceRecordsModel attendanceRecordsModel = GetAttendanceRecordsModel();
+          try {
+            attendanceRecordsModel = GetAttendanceRecordsModel.fromJson(data);
+            if (attendanceRecordsModel.status?.toLowerCase() == ConstantStrings.success.toLowerCase()) {
+              Map<DateTime, CalenderViewModel> calenderData = {};
+              for (final record in attendanceRecordsModel.response ?? []) {
+                if (record.timestamp != null && record.timestamp!.isNotEmpty) {
+                  final parsedDate = DateTime.tryParse(record.timestamp!);
+                  if (parsedDate != null) {
+                    final resetDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+                    calenderData[resetDate] = CalenderViewModel(
+                      color: AppColors.presentColor,
+                      presentCount: record.presentStudents ?? 0,
+                      records: record,
+                    );
+                  }
+                }
+              }
+              emit(state.copyWith(
+                  fetchAttendanceRecordsLoading: false,
+                  attendanceRecordError: "",
+                  calenderData: calenderData,
+                  attendanceRecordsData: attendanceRecordsModel));
+            } else {
+              emit(state.copyWith(
+                  fetchAttendanceRecordsLoading: false,
+                  attendanceRecordError: attendanceRecordsModel.message,
+                  attendanceRecordsData: attendanceRecordsModel));
+            }
+          } catch (e) {
+            emit(state.copyWith(
+                fetchAttendanceRecordsLoading: false,
+                attendanceRecordError: e.toString(),
+                attendanceRecordsData: attendanceRecordsModel));
+          }
+        } else {
+          emit(state.copyWith(
+              fetchAttendanceRecordsLoading: false,
+              attendanceRecordError: data["message"].toString(),
+              attendanceRecordsData: GetAttendanceRecordsModel()));
+        }
+      },
+      (error) {
+        emit(state.copyWith(
+            fetchAttendanceRecordsLoading: false,
+            attendanceRecordError: error,
+            attendanceRecordsData: GetAttendanceRecordsModel()));
       },
     );
   }

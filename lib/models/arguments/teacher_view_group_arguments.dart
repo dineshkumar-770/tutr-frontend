@@ -4,11 +4,13 @@ class TeacherViewGroupArguments {
   final String groupId;
   final String className;
   final String teacherName;
+  final String teacherId;
 
   TeacherViewGroupArguments({
     required this.groupTitle,
     required this.groupId,
     required this.className,
     required this.teacherName,
+    required this.teacherId,
   });
 }

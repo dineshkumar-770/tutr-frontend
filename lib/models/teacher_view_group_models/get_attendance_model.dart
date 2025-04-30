@@ -1,98 +1,106 @@
-class GetAttendanceModel {
+// ignore_for_file: constant_identifier_names
+
+class GetAttendanceRecordsModel {
   String? status;
   String? message;
-  List<AttResponse>? response;
+  List<AttendanceRecords>? response;
 
-  GetAttendanceModel({
+  GetAttendanceRecordsModel({
     this.status,
     this.message,
     this.response,
   });
 
-  factory GetAttendanceModel.fromJson(Map<String, dynamic> json) => GetAttendanceModel(
+  factory GetAttendanceRecordsModel.fromJson(Map<String, dynamic> json) => GetAttendanceRecordsModel(
         status: json["status"],
         message: json["message"],
         response: json["response"] == null
             ? []
-            : List<AttResponse>.from(json["response"].map((x) => AttResponse.fromJson(x))),
+            : List<AttendanceRecords>.from(json["response"].map((x) => AttendanceRecords.fromJson(x))),
       );
 }
 
-class AttResponse {
+class AttendanceRecords {
+  String? timestamp;
   String? attendanceId;
+  int? presentStudents;
+  int? absentStudents;
+  int? totalStudents;
+  int? leaveStudents;
+  int? lateStudents;
+  String? remarks;
   String? teacherId;
   String? groupId;
-  int? presentStudent;
-  int? totalStudents;
-  int? absentStudents;
-  String? markedAttendance;
-  int? createdAt;
-  String? remarks;
-  int? isMarkedSuccess;
+  List<Attendance>? attendance;
 
-  AttResponse({
+  AttendanceRecords({
+    this.timestamp,
     this.attendanceId,
+    this.presentStudents,
+    this.absentStudents,
+    this.totalStudents,
+    this.leaveStudents,
+    this.lateStudents,
+    this.remarks,
     this.teacherId,
     this.groupId,
-    this.presentStudent,
-    this.totalStudents,
-    this.absentStudents,
-    this.markedAttendance,
-    this.createdAt,
-    this.remarks,
-    this.isMarkedSuccess,
+    this.attendance,
   });
 
-  factory AttResponse.fromJson(Map<String, dynamic> json) => AttResponse(
+  factory AttendanceRecords.fromJson(Map<String, dynamic> json) => AttendanceRecords(
+        timestamp: json["timestamp"],
         attendanceId: json["attendance_id"],
+        presentStudents: json["present_students"],
+        absentStudents: json["absent_students"],
+        totalStudents: json["total_students"],
+        leaveStudents: json["leave_students"],
+        lateStudents: json["late_students"],
+        remarks: json["remarks"],
         teacherId: json["teacher_id"],
         groupId: json["group_id"],
-        presentStudent: json["present_student"],
-        totalStudents: json["total_students"],
-        absentStudents: json["absent_students"],
-        markedAttendance: json["marked_attendance"],
-        createdAt: json["created_at"],
-        remarks: json["remarks"],
-        isMarkedSuccess: json["is_marked_success"],
+        attendance: json["attendance"] == null
+            ? []
+            : List<Attendance>.from(json["attendance"].map((x) => Attendance.fromJson(x))),
       );
-
-  Map<String, dynamic> toJson() => {
-        "attendance_id": attendanceId,
-        "teacher_id": teacherId,
-        "group_id": groupId,
-        "present_student": presentStudent,
-        "total_students": totalStudents,
-        "absent_students": absentStudents,
-        "marked_attendance": markedAttendance,
-        "created_at": createdAt,
-        "remarks": remarks,
-        "is_marked_success": isMarkedSuccess,
-      };
 }
 
+class Attendance {
+  String? studentId;
+  Status? status;
+  String? name;
+  String? stEmail;
+  int? studentPhone;
 
-class StudentAttendance {
-  final String name;
-  final String status;
-  final String email;
-  final String studentId;
-  final int phone;
-
-  StudentAttendance({
-    required this.name,
-    required this.status,
-    required this.email,
-    required this.studentId,
-    required this.phone,
+  Attendance({
+    this.studentId,
+    this.status,
+    this.name,
+    this.stEmail,
+    this.studentPhone,
   });
 
-  factory StudentAttendance.fromJson(Map<String, dynamic> json) {
-    return StudentAttendance(
-      name: json['name'],
-      status: json['status'],
-      email: json['st_email'],
-      studentId: json['student_id'],
-      phone: json['student_phone'],
-    );
+  factory Attendance.fromJson(Map<String, dynamic> json) => Attendance(
+        studentId: json["student_id"],
+        status: statusValues.map[json["status"]],
+        name: json["name"],
+        stEmail: json["st_email"],
+        studentPhone: json["student_phone"],
+      );
+}
+
+enum Status { ABSENT, LATE, LEAVE, PRESENT }
+
+final statusValues =
+    EnumValues({"absent": Status.ABSENT, "late": Status.LATE, "leave": Status.LEAVE, "present": Status.PRESENT});
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
   }
 }

@@ -27,7 +27,16 @@ class TeacherViewGroupState extends Equatable {
   final bool deleteNotesLoading;
   final String deleteNotesError;
   final int deleteNotesIndex;
-  
+  final List<Map<String, dynamic>> markedAttendanceList;
+  final String remarks;
+  final bool saveAttendanceLoading;
+  final String saveAttendanceError;
+  final bool fetchAttendanceRecordsLoading;
+  final GetAttendanceRecordsModel attendanceRecordsData;
+  final String attendanceRecordError;
+  final  Map<DateTime, CalenderViewModel> calenderData;
+  final DateTime focusedDay;
+  final DateTime? selectedDay;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -55,6 +64,16 @@ class TeacherViewGroupState extends Equatable {
     required this.deleteNotesLoading,
     required this.deleteNotesError,
     required this.deleteNotesIndex,
+    required this.markedAttendanceList,
+    required this.remarks,
+    required this.saveAttendanceLoading,
+    required this.saveAttendanceError,
+    required this.fetchAttendanceRecordsLoading,
+    required this.attendanceRecordsData,
+    required this.attendanceRecordError,
+    required this.calenderData,
+    required this.focusedDay,
+    this.selectedDay,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -63,8 +82,16 @@ class TeacherViewGroupState extends Equatable {
       fetchNoticError: "",
       updateNoticeError: "",
       uploadNotesLoading: false,
+      attendanceRecordError: "",
+      attendanceRecordsData: GetAttendanceRecordsModel(),
+      fetchAttendanceRecordsLoading: false,
       deleteNotesError: "",
       deleteNotesLoading: false,
+      saveAttendanceError: "",
+      calenderData: {},
+      focusedDay: DateTime.now(),
+      selectedDay: DateTime.now(),
+      saveAttendanceLoading: false,
       inviteTappedIndex: 0,
       fetchMembersError: "",
       letterIndexMapForContacts: {},
@@ -75,6 +102,8 @@ class TeacherViewGroupState extends Equatable {
       userContactsData: [],
       fetchmembersLoading: false,
       attachedFilePathsList: [],
+      markedAttendanceList: [],
+      remarks: "",
       getGroupNotesLoading: false,
       groupNotesError: "",
       groupNotesMaterialdata: [],
@@ -90,6 +119,8 @@ class TeacherViewGroupState extends Equatable {
         fetchUserConatcsLoading,
         createNoticeError,
         fetchNoticError,
+        saveAttendanceLoading,
+        saveAttendanceError,
         fetchNoticeLoading,
         groupNoticeData,
         deleteNotesError,
@@ -110,7 +141,12 @@ class TeacherViewGroupState extends Equatable {
         checkStudentInviteLoading,
         inviteErrorMsg,
         checkStudentBeforeInviteData,
-        inviteTappedIndex
+        inviteTappedIndex,
+        markedAttendanceList,
+        remarks,
+        fetchAttendanceRecordsLoading,
+        attendanceRecordsData,
+        attendanceRecordError,
       ];
 
   TeacherViewGroupState copyWith({
@@ -139,6 +175,16 @@ class TeacherViewGroupState extends Equatable {
     bool? deleteNotesLoading,
     String? deleteNotesError,
     int? deleteNotesIndex,
+    List<Map<String, dynamic>>? markedAttendanceList,
+    String? remarks,
+    bool? saveAttendanceLoading,
+    String? saveAttendanceError,
+    bool? fetchAttendanceRecordsLoading,
+    GetAttendanceRecordsModel? attendanceRecordsData,
+    String? attendanceRecordError,
+    Map<DateTime, CalenderViewModel>? calenderData,
+    DateTime? focusedDay,
+    DateTime? selectedDay,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -166,6 +212,19 @@ class TeacherViewGroupState extends Equatable {
       deleteNotesLoading: deleteNotesLoading ?? this.deleteNotesLoading,
       deleteNotesError: deleteNotesError ?? this.deleteNotesError,
       deleteNotesIndex: deleteNotesIndex ?? this.deleteNotesIndex,
+      markedAttendanceList: markedAttendanceList ?? this.markedAttendanceList,
+      remarks: remarks ?? this.remarks,
+      saveAttendanceLoading: saveAttendanceLoading ?? this.saveAttendanceLoading,
+      saveAttendanceError: saveAttendanceError ?? this.saveAttendanceError,
+      fetchAttendanceRecordsLoading: fetchAttendanceRecordsLoading ?? this.fetchAttendanceRecordsLoading,
+      attendanceRecordsData: attendanceRecordsData ?? this.attendanceRecordsData,
+      attendanceRecordError: attendanceRecordError ?? this.attendanceRecordError,
+      calenderData: calenderData ?? this.calenderData,
+      focusedDay: focusedDay ?? this.focusedDay,
+      selectedDay: selectedDay ?? this.selectedDay,
     );
   }
 }
+
+// ignore: constant_identifier_names
+enum StudentAttendanceStatus { PRESENT, ABSENT, LATE, LEAVE }

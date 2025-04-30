@@ -33,9 +33,30 @@ class AppSettings extends StatelessWidget {
             );
           } else if (state.userProfileError.isNotEmpty) {
             return Center(
-              child: Text(
-                state.userProfileError,
-                style: CustomTextStyles.errorTextStyle,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    state.userProfileError,
+                    style: CustomTextStyles.errorTextStyle,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TutrPrimaryButton(
+                        onPressed: () async {
+                          await Prefs.clear();
+                          if (context.mounted) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              AppRouteNames.splashScreen,
+                              (Route<dynamic> route) => false,
+                            );
+                          }
+                        },
+                        label: "logout"),
+                  )
+                ],
               ),
             );
           } else {

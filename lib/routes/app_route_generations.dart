@@ -14,6 +14,7 @@ import 'package:tutr_frontend/views/teacher_group_view/invite_student_screen.dar
 import 'package:tutr_frontend/views/teacher_group_view/notice_board_tab.dart';
 import 'package:tutr_frontend/views/teacher_group_view/preview_notes.screen.dart';
 import 'package:tutr_frontend/views/teacher_group_view/students_list_tab.dart';
+import 'package:tutr_frontend/views/teacher_group_view/take_attendance.dart';
 import 'package:tutr_frontend/views/teacher_group_view/teacher_attendance.dart';
 import 'package:tutr_frontend/views/teacher_group_view/teacher_view_group.dart';
 import 'package:tutr_frontend/views/teacher_group_view/upload_notes_screen.dart';
@@ -49,10 +50,17 @@ mixin AppRoutesGeneration {
           groupId: args,
         ),
     AppRouteNames.classNotesScreen: (context, args) => ClassNotesTab(
-      classMaterialArgs: args,
+          classMaterialArgs: args,
         ),
-    AppRouteNames.previewNotesScreen: (context, args) =>  PreviewNotes(previewNotesArgs: args,),
-    AppRouteNames.teacherAttendanceScreen: (context, args) =>  TeacherAttendanceScreen(teacherAttendanceArgs: args,),
+    AppRouteNames.previewNotesScreen: (context, args) => PreviewNotes(
+          previewNotesArgs: args,
+        ),
+    AppRouteNames.teacherAttendanceScreen: (context, args) => TeacherAttendanceScreen(
+          teacherAttendanceArgs: args,
+        ),
+    AppRouteNames.takeAttendanceScreen: (context, args) => TakeAttendanceScreen(
+          takeAttendanceArgs: args,
+        ),
   };
 
   Map<String, Widget Function(BuildContext, dynamic)> get routes {
