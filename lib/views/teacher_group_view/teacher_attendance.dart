@@ -1,59 +1,33 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/common/custom_loading_widget.dart';
+import 'package:tutr_frontend/core/common/gap.dart';
+import 'package:tutr_frontend/core/common/tutr_button.dart';
+import 'package:tutr_frontend/core/di/locator_di.dart';
+import 'package:tutr_frontend/models/arguments/attendance_groups_all_records_args.dart';
 import 'package:tutr_frontend/models/arguments/take_attendance_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_attendance_args.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/calender_view_model.dart';
 import 'package:tutr_frontend/routes/app_route_names.dart';
 import 'package:tutr_frontend/themes/styles/custom_text_styles.dart';
+import 'package:tutr_frontend/utils/helpers.dart';
 import 'package:tutr_frontend/viewmodels/teacher_view_group_bloc/bloc/teacher_view_group_bloc.dart';
+import 'package:tutr_frontend/widgets/teacher_view/attendance_calender_tile.dart';
 
-class TeacherAttendanceScreen extends StatefulWidget {
+class TeacherAttendanceScreen extends StatelessWidget {
   const TeacherAttendanceScreen({
     super.key,
     required this.teacherAttendanceArgs,
   });
   final TeacherAttendanceArgs teacherAttendanceArgs;
-
-  @override
-  State<TeacherAttendanceScreen> createState() => _TeacherAttendanceScreenState();
-}
-
-class _TeacherAttendanceScreenState extends State<TeacherAttendanceScreen> {
-  final CalendarFormat _calendarFormat = CalendarFormat.month;
-  // DateTime _focusedDay = DateTime.now();
-  // DateTime? _selectedDay;
-  // final Map<DateTime, List<AttendanceRecords>> manualData = {};
-
-  // List<Object?> manualEventLoader(DateTime date) {
-  //   return manualData[date] ?? [];
-  // }
-
-  @override
-  void initState() {
-    super.initState();
-    // _selectedDay = _focusedDay;
-    // for (int i = 0; i < 10; i++) {
-    //   DateTime date = DateTime.now().subtract(Duration(days: i));
-    //   DateTime resetDate = DateTime(date.year, date.month, date.day);
-    //   String formattedDate = DateFormat("yyyy-MM-dd HH:mm:ss.SSS'Z'").format(resetDate);
-    //   DateTime dateTime = DateTime.parse(formattedDate).toUtc();
-    //   manualData[dateTime] = ['Present $i', i < 5 ? AppColors.red : AppColors.primaryColor];
-    // }
-
-    // log(manualData.toString());
-  }
-
-  // void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-  //   setState(() {
-  //     _selectedDay = selectedDay;
-  //     _focusedDay = focusedDay;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +36,9 @@ class _TeacherAttendanceScreenState extends State<TeacherAttendanceScreen> {
         onPressed: () {
           context
               .read<TeacherViewGroupBloc>()
-              .add(FetchGroupMembersEvent(context: context, groupId: widget.teacherAttendanceArgs.groupId));
+              .add(FetchGroupMembersEvent(context: context, groupId: teacherAttendanceArgs.groupId));
           Navigator.pushNamed(context, AppRouteNames.takeAttendanceScreen,
-              arguments: TakeAttendanceArgs(groupId: widget.teacherAttendanceArgs.groupId));
+              arguments: TakeAttendanceArgs(groupId: teacherAttendanceArgs.groupId));
         },
         child: Icon(FontAwesomeIcons.add),
       ),
@@ -84,111 +58,172 @@ class _TeacherAttendanceScreenState extends State<TeacherAttendanceScreen> {
             return Center(
               child: CustomLoadingWidget(),
             );
+          } else if (state.attendanceRecordError.isNotEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  state.attendanceRecordError,
+                  textAlign: TextAlign.center,
+                  style: CustomTextStyles.errorTextStyle,
+                ),
+              ),
+            );
           } else {
-            return Column(
-              children: [
-                TableCalendar(
-                  firstDay: DateTime.utc(2020),
-                  lastDay: DateTime.utc(2030),
-                  focusedDay: state.focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(state.selectedDay, day),
-                  calendarFormat: _calendarFormat,
-                  daysOfWeekHeight: 32,
-                  eventLoader: (day) {
-                    final resetDate = DateTime(day.year, day.month, day.day);
-                    final model = state.calenderData[resetDate];
-                    if (model != null) {
-                      return [model];
-                    }
-                    return [];
-                  },
-
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  // onDaySelected: _onDaySelected,
-                  availableCalendarFormats: const {
-                    CalendarFormat.month: 'Month',
-                  },
-                  calendarStyle: const CalendarStyle(
-                    selectedDecoration: BoxDecoration(
-                      color: Colors.cyan,
-                      shape: BoxShape.circle,
+            if (state.attendanceRecordsData.response != null && state.attendanceRecordsData.response!.isNotEmpty) {
+              return Column(
+                children: [
+                  TableCalendar(
+                    availableCalendarFormats: const {
+                      CalendarFormat.month: 'Month',
+                      CalendarFormat.twoWeeks: '2 weeks',
+                    },
+                    firstDay: DateTime.utc(2020),
+                    lastDay: DateTime.utc(2030),
+                    focusedDay: state.focusedDay,
+                    selectedDayPredicate: (day) {
+                      final isSame = isSameDay(day, state.selectedDay);
+                      return isSame;
+                    },
+                    calendarFormat: CalendarFormat.twoWeeks,
+                    daysOfWeekHeight: 32,
+                    eventLoader: (day) {
+                      final resetDate = DateTime(day.year, day.month, day.day);
+                      return state.calenderData[resetDate] ?? [];
+                    },
+                    startingDayOfWeek: StartingDayOfWeek.monday,
+                    onDaySelected: (selectedDay, focusedDay) {
+                      context
+                          .read<TeacherViewGroupBloc>()
+                          .add(OnSelectedDateEvent(focusedDay: focusedDay, selectedDay: selectedDay));
+                    },
+                    calendarStyle: CalendarStyle(
+                      selectedDecoration: BoxDecoration(
+                        color: AppColors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      isTodayHighlighted: true,
+                      canMarkersOverflow: false,
+                      todayDecoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      selectedTextStyle: TextStyle(color: AppColors.white),
+                      weekendTextStyle: TextStyle(color: Colors.orange),
                     ),
-                    todayDecoration: BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
+                    calendarBuilders: CalendarBuilders(
+                      markerBuilder: (context, date, events) {
+                        if (events.isNotEmpty && events.first is CalenderViewModel) {
+                          return Center(
+                              child: Icon(
+                            Icons.check,
+                            size: 30,
+                            color: AppColors.presentColor,
+                          ));
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
                     ),
-                    weekendTextStyle: TextStyle(color: Colors.orange),
-                  ),
-                  calendarBuilders: CalendarBuilders(
-                    markerBuilder: (context, date, events) {
-                      if (events.isNotEmpty && events.first is CalenderViewModel) {
-                        final model = events.first as CalenderViewModel;
-
-                        return Container(
-                          margin: const EdgeInsets.all(2),
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: model.color,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                date.day.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              Text(
-                                model.presentCount.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const SizedBox();
-                      }
+                    onPageChanged: (focusedDay) {
+                      log(focusedDay.toIso8601String());
                     },
                   ),
-                  // onPageChanged: (focusedDay) {
-                  //   _focusedDay = focusedDay;
-                  // },
+                  const SizedBox(height: 8),
+                  if ((state.calenderData[DateTime.parse(
+                              DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))])
+                          ?.isNotEmpty ??
+                      false) ...[
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: (state.calenderData[DateTime.parse(
+                                    DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))])
+                                ?.length ??
+                            0,
+                        itemBuilder: (context, index) {
+                          final calEvent = (state.calenderData[DateTime.parse(
+                                  DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))]
+                              ?[index]);
+
+                          return AttendanceCalenderTile(
+                            record: calEvent!.records,
+                            isViewFromAllRecords: false,
+                            
+                          );
+                        },
+                      ),
+                    )
+                  ] else ...[
+                    Gaps.verticalGap(value: 100),
+                    Center(
+                      child: Text(
+                          "No records found on dated ${locatorDI<Helper>().formatDateinDDMMMYYYY(state.selectedDay ?? DateTime.now())}"),
+                    ),
+                  ]
+                ],
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: Text(
+                    style: CustomTextStyles.errorTextStyle,
+                    state.attendanceRecordError,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                // Expanded(
-                //   child: ListView.builder(
-                //     itemCount: manualData.length,
-                //     itemBuilder: (context, index) {
-                //       return Text(manualData.values.toList()[index][0].toString());
-                //     },
-                //   ),
-                // )
-                // Expanded(
-                //   child: ListView(
-                //     children: (_selectedDay == null
-                //             ? manualData.entries
-                //             : manualData.entries.where((entry) =>
-                //                 DateTime(entry.key.year, entry.key.month, entry.key.day) ==
-                //                 DateTime(_selectedDay!.year, _selectedDay!.month, _selectedDay!.day)))
-                //         .map((entry) => Container(
-                //               padding: const EdgeInsets.all(8),
-                //               child: Row(
-                //                 children: [
-                //                   Text(entry.key.toString()),
-                //                   const Spacer(),
-                //                   Text(entry.value.first.toString()),
-                //                 ],
-                //               ),
-                //             ))
-                //         .toList(),
-                //   ),
-                // ),
-              ],
-            );
+              );
+            }
           }
         },
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            spacing: 10,
+            children: [
+              TutrPrimaryButton(
+                onPressed: () {
+                  context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                      count: 30,
+                      page: 1,
+                      endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                      startDate:
+                          DateFormat("dd-MM-yyyy 00:00:00").format(DateTime.now().subtract(const Duration(days: 30))),
+                      groupId: teacherAttendanceArgs.groupId,
+                      studentId: null,
+                      teacherId: teacherAttendanceArgs.teacherId));
+                  Navigator.pushNamed(context, AppRouteNames.attendanceGroupsAllRecordScreen,
+                      arguments: AttendanceGroupsAllRecordsArgs(
+                        groupId: teacherAttendanceArgs.groupId,
+                        studentId: "",
+                        teacherId: teacherAttendanceArgs.teacherId,
+                      ));
+                },
+                width: MediaQuery.of(context).size.width / 2,
+                label: "All Records",
+                icon: Icon(
+                  FontAwesomeIcons.list,
+                  color: AppColors.white,
+                ),
+                fontSize: 12,
+              ),
+              TutrPrimaryButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.analytics_outlined,
+                  color: AppColors.white,
+                  size: 22,
+                ),
+                width: MediaQuery.of(context).size.width / 2,
+                label: "Analyize Records",
+                fontSize: 12,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

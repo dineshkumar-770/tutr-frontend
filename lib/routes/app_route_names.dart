@@ -16,4 +16,5 @@ class AppRouteNames {
   static const String previewNotesScreen = "/previewNotes";
   static const String teacherAttendanceScreen = "/TeacherAttendanceScreen";
   static const String takeAttendanceScreen = "/TakeAttendanceScreen";
+  static const String attendanceGroupsAllRecordScreen = "/AttendanceGroupsAllRecordScreen";
 }

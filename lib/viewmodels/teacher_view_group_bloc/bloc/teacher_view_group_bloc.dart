@@ -42,6 +42,9 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<MarkAttendanceEvent>(markAttendanceRecord);
     on<SaveStudensAttendanceEvent>(saveStudensAttendance);
     on<GetAttendanceRecordsEvent>(fetchAttendanceRecords);
+    on<OnSelectedDateEvent>(onSelectedDays);
+    on<UpdateBulkRecordsAttendance>(updateBulkAttendances);
+    on<InitializeOriginalRecordsList>(initialOriginalRecordsForBulkEdits);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();
@@ -462,6 +465,33 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     );
   }
 
+  Future<void> updateBulkAttendances(UpdateBulkRecordsAttendance event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(updateRecordsLoading: true, updateRecordsError: ""));
+    final response = await _apiCalls.editBulkAttendanceRecords(
+        attendanceId: event.attendanceId, updatedRecords: event.updatedRecords);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          emit(state.copyWith(updateRecordsLoading: false, updateRecordsError: ""));
+          CustomToast.show(
+              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          Navigator.pop(event.context, true);
+        } else {
+          emit(state.copyWith(updateRecordsLoading: false, updateRecordsError: data["message"]));
+          CustomToast.show(
+              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          Navigator.pop(event.context, true);
+        }
+      },
+      (error) {
+        emit(state.copyWith(updateRecordsLoading: false, updateRecordsError: error));
+        CustomToast.show(toastType: ToastificationType.success, context: event.context, title: error);
+        Navigator.pop(event.context, true);
+      },
+    );
+  }
+
   Future<void> deleteClassMaterialNotes(DeleteClassMaterialEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(deleteNotesLoading: true, deleteNotesError: "", deleteNotesIndex: event.selectedNotesIndex));
 
@@ -520,6 +550,10 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     log(state.markedAttendanceList.toString());
   }
 
+  void initialOriginalRecordsForBulkEdits(InitializeOriginalRecordsList event, Emitter<TeacherViewGroupState> emit) {
+    emit(state.copyWith(markedAttendanceList: event.originalList));
+  }
+
   Future<void> saveStudensAttendance(SaveStudensAttendanceEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(saveAttendanceLoading: true, saveAttendanceError: ""));
     final response = await _apiCalls.saveGroupAttendance(
@@ -541,6 +575,14 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
         emit(state.copyWith(saveAttendanceError: error, saveAttendanceLoading: false));
       },
     );
+  }
+
+  void onSelectedDays(OnSelectedDateEvent event, Emitter<TeacherViewGroupState> emit) {
+    final newSelectedDay = event.selectedDay;
+    final newFocusedDay = event.focusedDay;
+
+    emit(state.copyWith(selectedDay: newSelectedDay, focusedDay: newFocusedDay));
+    log("S: ${locatorDI<Helper>().formatDateinDDMMYYYY(event.selectedDay)} and F:- ${locatorDI<Helper>().formatDateinDDMMYYYY(event.focusedDay)}");
   }
 
   Future<void> fetchAttendanceRecords(GetAttendanceRecordsEvent event, Emitter<TeacherViewGroupState> emit) async {
@@ -565,25 +607,41 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
           try {
             attendanceRecordsModel = GetAttendanceRecordsModel.fromJson(data);
             if (attendanceRecordsModel.status?.toLowerCase() == ConstantStrings.success.toLowerCase()) {
-              Map<DateTime, CalenderViewModel> calenderData = {};
-              for (final record in attendanceRecordsModel.response ?? []) {
-                if (record.timestamp != null && record.timestamp!.isNotEmpty) {
-                  final parsedDate = DateTime.tryParse(record.timestamp!);
-                  if (parsedDate != null) {
-                    final resetDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
-                    calenderData[resetDate] = CalenderViewModel(
-                      color: AppColors.presentColor,
-                      presentCount: record.presentStudents ?? 0,
-                      records: record,
-                    );
+              if (attendanceRecordsModel.response != null && attendanceRecordsModel.response!.isNotEmpty) {
+                Map<DateTime, List<CalenderViewModel>> calenderData = {};
+
+                for (final record in attendanceRecordsModel.response ?? []) {
+                  if (record.timestamp != null && record.timestamp!.isNotEmpty) {
+                    final parsedDate = DateTime.tryParse(record.timestamp!);
+                    if (parsedDate != null) {
+                      final resetDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+
+                      final model = CalenderViewModel(
+                        color: AppColors.presentColor,
+                        presentCount: record.presentStudents ?? 0,
+                        records: record,
+                      );
+
+                      if (calenderData.containsKey(resetDate)) {
+                        calenderData[resetDate]!.add(model);
+                      } else {
+                        calenderData[resetDate] = [model];
+                      }
+                    }
                   }
                 }
+                emit(state.copyWith(
+                    fetchAttendanceRecordsLoading: false,
+                    attendanceRecordError: "",
+                    calenderData: calenderData,
+                    attendanceRecordsData: attendanceRecordsModel));
+              } else {
+                emit(state.copyWith(
+                    fetchAttendanceRecordsLoading: false,
+                    attendanceRecordError: "No Attendance records found.",
+                    calenderData: {},
+                    attendanceRecordsData: attendanceRecordsModel));
               }
-              emit(state.copyWith(
-                  fetchAttendanceRecordsLoading: false,
-                  attendanceRecordError: "",
-                  calenderData: calenderData,
-                  attendanceRecordsData: attendanceRecordsModel));
             } else {
               emit(state.copyWith(
                   fetchAttendanceRecordsLoading: false,

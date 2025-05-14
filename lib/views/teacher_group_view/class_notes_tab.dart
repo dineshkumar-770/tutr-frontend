@@ -226,7 +226,9 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                 Gaps.verticalGap(value: 10),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pushNamed(context, AppRouteNames.previewNotesScreen,arguments: PreviewNotesArgs(notesURL: state.groupNotesMaterialdata[index].attachedFiles ?? []));
+                                    Navigator.pushNamed(context, AppRouteNames.previewNotesScreen,
+                                        arguments: PreviewNotesArgs(
+                                            notesURL: state.groupNotesMaterialdata[index].attachedFiles ?? []));
                                   },
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
@@ -251,7 +253,8 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                       decoration: BoxDecoration(
                                                           borderRadius: BorderRadius.circular(8),
                                                           image: DecorationImage(
-                                                              image: NetworkImage(notes.attachedFiles?[fileIndex].noteUrl ?? ""),
+                                                              image: NetworkImage(
+                                                                  notes.attachedFiles?[fileIndex].noteUrl ?? ""),
                                                               fit: BoxFit.fill)),
                                                     ),
                                                   ),

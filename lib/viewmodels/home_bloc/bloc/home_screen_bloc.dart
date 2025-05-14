@@ -67,14 +67,21 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       (data) {
         TeacherDataModel teacherDataModel = TeacherDataModel();
         try {
-          if (data["message"].toString().toLowerCase().contains(ConstantStrings.teacher)) {
+          if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
             teacherDataModel = TeacherDataModel.fromJson(data);
-
             emit(state.copyWith(
                 userProfileError: "",
                 userProfileLoading: false,
                 teacherData: teacherDataModel,
                 packageInfo: packageInfo));
+          } else {
+            emit(state.copyWith(
+                userProfileError: data["message"].toString(),
+                userProfileLoading: false,
+                teacherData: teacherDataModel,
+                packageInfo: packageInfo));
+            CustomToast.show(
+                toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
           }
         } catch (e) {
           emit(state.copyWith(userProfileError: e.toString(), userProfileLoading: false, packageInfo: packageInfo));

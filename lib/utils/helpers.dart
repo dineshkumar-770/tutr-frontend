@@ -12,6 +12,14 @@ class Helper {
     return DateFormat("dd MMM, yyyy hh:mm a").format(DateTime.fromMillisecondsSinceEpoch(time * 1000));
   }
 
+  String formatDateinDDMMYYYY(DateTime date) {
+    return DateFormat("dd-MM-yyyy").format(date);
+  }
+
+  String formatDateinDDMMMYYYY(DateTime date) {
+    return DateFormat("dd MMM, yyyy hh:mm a").format(date);
+  }
+
   String formatTimeFromMinutes(int totalMinutes) {
     int hours = totalMinutes ~/ 60;
     int minutes = totalMinutes % 60;
@@ -129,28 +137,26 @@ class Helper {
     return sanitizedList.toSet().toList();
   }
 
-  S3URLType extractMediaTypeFromUrl(String url){
+  S3URLType extractMediaTypeFromUrl(String url) {
     try {
       final mainURL = url.split("?").toList()[0];
       final extractExtension = mainURL.split("/");
-      if(extractExtension.last.contains("jpg") || extractExtension.last.contains("jpeg") || extractExtension.last.contains("png") || extractExtension.contains("webp") ){
+      if (extractExtension.last.contains("jpg") ||
+          extractExtension.last.contains("jpeg") ||
+          extractExtension.last.contains("png") ||
+          extractExtension.contains("webp")) {
         return S3URLType.IMAGE;
-      }else if(extractExtension.last.contains("pdf") ){
+      } else if (extractExtension.last.contains("pdf")) {
         return S3URLType.PDF;
-      }else if(extractExtension.last.contains("mp4")  ){
+      } else if (extractExtension.last.contains("mp4")) {
         return S3URLType.VIDEO;
-      }else{
+      } else {
         return S3URLType.NIL;
       }
-
     } catch (e) {
       return S3URLType.NIL;
     }
   }
-
-
 }
 
-enum S3URLType {
-  PDF,IMAGE,VIDEO,NIL
-}
+enum S3URLType { PDF, IMAGE, VIDEO, NIL }

@@ -34,9 +34,11 @@ class TeacherViewGroupState extends Equatable {
   final bool fetchAttendanceRecordsLoading;
   final GetAttendanceRecordsModel attendanceRecordsData;
   final String attendanceRecordError;
-  final  Map<DateTime, CalenderViewModel> calenderData;
+  final Map<DateTime, List<CalenderViewModel>> calenderData;
   final DateTime focusedDay;
   final DateTime? selectedDay;
+  final bool updateRecordsLoading;
+  final String updateRecordsError;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -74,6 +76,8 @@ class TeacherViewGroupState extends Equatable {
     required this.calenderData,
     required this.focusedDay,
     this.selectedDay,
+    required this.updateRecordsLoading,
+    required this.updateRecordsError,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -111,6 +115,8 @@ class TeacherViewGroupState extends Equatable {
       deleteNotesIndex: -1,
       updateNoticeLoading: false,
       fetchNoticeLoading: false,
+      updateRecordsError: "",
+      updateRecordsLoading: false,
       groupNoticeData: GroupNoticeModel());
 
   @override
@@ -147,6 +153,11 @@ class TeacherViewGroupState extends Equatable {
         fetchAttendanceRecordsLoading,
         attendanceRecordsData,
         attendanceRecordError,
+        selectedDay!,
+        focusedDay,
+        calenderData,
+        updateRecordsLoading,
+        updateRecordsError,
       ];
 
   TeacherViewGroupState copyWith({
@@ -182,9 +193,11 @@ class TeacherViewGroupState extends Equatable {
     bool? fetchAttendanceRecordsLoading,
     GetAttendanceRecordsModel? attendanceRecordsData,
     String? attendanceRecordError,
-    Map<DateTime, CalenderViewModel>? calenderData,
+    Map<DateTime, List<CalenderViewModel>>? calenderData,
     DateTime? focusedDay,
     DateTime? selectedDay,
+    bool? updateRecordsLoading,
+    String? updateRecordsError,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -222,6 +235,8 @@ class TeacherViewGroupState extends Equatable {
       calenderData: calenderData ?? this.calenderData,
       focusedDay: focusedDay ?? this.focusedDay,
       selectedDay: selectedDay ?? this.selectedDay,
+      updateRecordsLoading: updateRecordsLoading ?? this.updateRecordsLoading,
+      updateRecordsError: updateRecordsError ?? this.updateRecordsError,
     );
   }
 }

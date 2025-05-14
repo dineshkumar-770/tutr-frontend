@@ -191,6 +191,7 @@ class ApiCalls {
       http.Response apiResponse = await HttpHelper.requestGET(url: endpoint, headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
+        log(apiResponse.body);
         return left(decodedData);
       } else {
         try {
@@ -544,6 +545,8 @@ class ApiCalls {
     try {
       String endpoint = "${ApiEndpoints.takeStudentAttendance}?group_id=$groupId&count=$count&page=$pageNumber";
       Map<String, dynamic> formData = {
+        // "start_date": "01-02-2025 00:00:00",
+        // "end_date": "01-03-2025 00:00:00",
         "start_date": startDate,
         "end_date": endDate,
         "teacher_id": teacherId,
@@ -553,6 +556,31 @@ class ApiCalls {
       }
       http.Response apiResponse =
           await HttpHelper.requrestPOST(url: endpoint, headers: headersWithToken(), body: formData);
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> editBulkAttendanceRecords(
+      {required String attendanceId, required List<Map<String, dynamic>> updatedRecords}) async {
+    try {
+      String endpoint = "${ApiEndpoints.ediBulkAttendanceRecord}?attendance_id=$attendanceId";
+      http.Response apiResponse =
+          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(updatedRecords), headers: headersWithToken());
+
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);

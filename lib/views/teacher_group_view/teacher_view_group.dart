@@ -89,7 +89,9 @@ class _TeacherViewGroupState extends State<TeacherViewGroup> with TickerProvider
 
                   case 4:
                     Navigator.pushNamed(context, AppRouteNames.teacherAttendanceScreen,
-                        arguments: TeacherAttendanceArgs(groupId: widget.teacherViewGroupArguments.groupId));
+                        arguments: TeacherAttendanceArgs(
+                            groupId: widget.teacherViewGroupArguments.groupId,
+                            teacherId: widget.teacherViewGroupArguments.teacherId));
                     log(Prefs.getString(ConstantStrings.userToken));
                     context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
                         count: 30,

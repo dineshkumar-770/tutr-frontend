@@ -15,4 +15,5 @@ class ConstantStrings {
   static const String serverError = "Server is acting up.Please try again later";
   static const String userToken = "usertokenstring";
   static const String userType = "userTypeKey";
+  static const String userId = "userIDKey";
 }

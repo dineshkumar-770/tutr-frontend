@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tutr_frontend/models/arguments/attendance_groups_all_records_args.dart';
 import 'package:tutr_frontend/models/arguments/class_material_args.dart';
 import 'package:tutr_frontend/models/arguments/invite_memeber_args.dart';
 import 'package:tutr_frontend/models/arguments/preview_notes_args.dart';
@@ -98,6 +99,11 @@ class AppRoutesNavigation with AppRoutesGeneration {
         return CupertinoPageRoute(
           builder: (context) =>
               routes[AppRouteNames.takeAttendanceScreen]!(context, settings.arguments as TakeAttendanceArgs),
+        );
+      case AppRouteNames.attendanceGroupsAllRecordScreen:
+        return CupertinoPageRoute(
+          builder: (context) => routes[AppRouteNames.attendanceGroupsAllRecordScreen]!(
+              context, settings.arguments as AttendanceGroupsAllRecordsArgs),
         );
 
       default:

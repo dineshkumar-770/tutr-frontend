@@ -1,16 +1,20 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:tutr_frontend/constants/app_colors.dart';
+import 'package:tutr_frontend/models/teacher_view_group_models/get_attendance_model.dart';
 import 'package:tutr_frontend/viewmodels/teacher_view_group_bloc/bloc/teacher_view_group_bloc.dart';
 
 class TakeAttendanceListTile extends StatefulWidget {
   final Function(StudentAttendanceStatus) onAttendanceMarked;
   final String studentName;
+  final Status? prefilledStatus;
 
   const TakeAttendanceListTile({
     super.key,
     required this.onAttendanceMarked,
     required this.studentName,
+    this.prefilledStatus,
   });
 
   @override
@@ -25,6 +29,26 @@ class _TakeAttendanceListTileState extends State<TakeAttendanceListTile> {
       selectedStatus = status;
     });
     widget.onAttendanceMarked(status);
+  }
+
+  @override
+  void initState() {
+    if (widget.prefilledStatus != null) {
+      switch (widget.prefilledStatus) {
+        case Status.PRESENT:
+          selectedStatus = StudentAttendanceStatus.PRESENT;
+        case Status.ABSENT:
+          selectedStatus = StudentAttendanceStatus.ABSENT;
+        case Status.LATE:
+          selectedStatus = StudentAttendanceStatus.LATE;
+        case Status.LEAVE:
+          selectedStatus = StudentAttendanceStatus.LEAVE;
+
+        default:
+          selectedStatus = StudentAttendanceStatus.PRESENT;
+      }
+    }
+    super.initState();
   }
 
   @override
@@ -82,12 +106,7 @@ class _TakeAttendanceListTileState extends State<TakeAttendanceListTile> {
           padding: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
-            // gradient: isSelected
-            //     ? LinearGradient(
-            //         colors: [color, Color(0xFFE1BEE7)], begin: Alignment.topLeft, end: Alignment.bottomRight)
-            //     : null,
             color: color,
-            // border: isSelected ? Border.all(color: AppColors.primaryColor, width: 2) : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

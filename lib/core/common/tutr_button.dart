@@ -11,12 +11,14 @@ class TutrPrimaryButton extends StatelessWidget {
     required this.label,
     this.height,
     this.width,
+    this.fontSize,
   });
   final void Function() onPressed;
   final Widget? icon;
   final String label;
   final double? height;
   final double? width;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,12 @@ class TutrPrimaryButton extends StatelessWidget {
       child: ElevatedButton.icon(
           onPressed: onPressed,
           style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.primaryButtonColor)),
-          label: Text(
-            label,
-            style: TextStyle(color: AppColors.buttonTextColor, fontSize: 16),
+          label: Center(
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.buttonTextColor, fontSize: fontSize ?? 16),
+            ),
           ),
           icon: icon),
     );

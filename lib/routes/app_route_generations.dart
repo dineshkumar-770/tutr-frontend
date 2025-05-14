@@ -8,6 +8,7 @@ import 'package:tutr_frontend/views/auth_screen/register_screen.dart';
 import 'package:tutr_frontend/views/home_screen/home_screen.dart';
 import 'package:tutr_frontend/views/root_screen/root_screen.dart';
 import 'package:tutr_frontend/views/splash/splash_screen.dart';
+import 'package:tutr_frontend/views/teacher_group_view/attendance_groups_all_record.dart';
 import 'package:tutr_frontend/views/teacher_group_view/class_notes_tab.dart';
 import 'package:tutr_frontend/views/teacher_group_view/doubts_chat_tab.dart';
 import 'package:tutr_frontend/views/teacher_group_view/invite_student_screen.dart';
@@ -60,6 +61,9 @@ mixin AppRoutesGeneration {
         ),
     AppRouteNames.takeAttendanceScreen: (context, args) => TakeAttendanceScreen(
           takeAttendanceArgs: args,
+        ),
+    AppRouteNames.attendanceGroupsAllRecordScreen: (context, args) => AttendanceGroupsAllRecordScreen(
+          allRecordsArgs: args,
         ),
   };
 

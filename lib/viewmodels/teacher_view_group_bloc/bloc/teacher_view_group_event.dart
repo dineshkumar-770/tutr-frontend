@@ -263,3 +263,37 @@ class GetAttendanceRecordsEvent extends TeacherViewGroupEvent {
         studentId ?? "",
       ];
 }
+
+class OnSelectedDateEvent extends TeacherViewGroupEvent {
+  final DateTime selectedDay;
+  final DateTime focusedDay;
+
+  const OnSelectedDateEvent({required this.selectedDay, required this.focusedDay});
+
+  @override
+  List<Object> get props => [selectedDay, focusedDay];
+}
+
+class UpdateBulkRecordsAttendance extends TeacherViewGroupEvent {
+  final String attendanceId;
+  final BuildContext context;
+  final List<Map<String, dynamic>> updatedRecords;
+
+  const UpdateBulkRecordsAttendance({
+    required this.attendanceId,
+    required this.context,
+    required this.updatedRecords,
+  });
+
+  @override
+  List<Object> get props => [attendanceId, updatedRecords, context];
+}
+
+class InitializeOriginalRecordsList extends TeacherViewGroupEvent {
+  final List<Map<String, dynamic>> originalList;
+
+  const InitializeOriginalRecordsList({required this.originalList});
+
+  @override
+  List<Object> get props => [originalList];
+}

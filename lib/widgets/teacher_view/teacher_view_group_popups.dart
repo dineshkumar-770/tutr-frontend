@@ -146,4 +146,35 @@ class TeacherViewGroupPopups {
       ],
     );
   }
+  Future<String?> showPopUpMenuAttendance(
+      {required BuildContext context, required Offset position, required double tileWidth}) async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    return await showMenu<String>(
+      context: context,
+      color: AppColors.backgroundColor,
+      position: RelativeRect.fromLTRB(
+        position.dx + tileWidth,
+        position.dy,
+        overlay.size.width - (position.dx + tileWidth),
+        overlay.size.height - position.dy,
+      ),
+      items: [
+        PopupMenuItem(
+          value: "1",
+          child: Text(
+            "Edit Record",
+            style: TextStyle(color: AppColors.textColor1),
+          ),
+        ),
+        PopupMenuItem(
+          value: "2",
+          child: Text(
+            "Delete Record",
+            style: TextStyle(color: AppColors.textColor1),
+          ),
+        ),
+      ],
+    );
+  }
 }

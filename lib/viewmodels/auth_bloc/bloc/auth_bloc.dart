@@ -141,9 +141,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
           emit(state.copyWith(verifyOTPLoading: false));
           CustomToast.show(toastType: ToastificationType.success, context: context, title: data["message"].toString());
-          await Prefs.setString(ConstantStrings.userToken, data["response"].toString());
-          await Prefs.setString(ConstantStrings.userType, event.loginType);
-          await Future.delayed(const Duration(seconds: 3));
+          await Prefs.setString(ConstantStrings.userToken, data["response"]["token"].toString());
+          await Prefs.setString(ConstantStrings.userType, data["response"]["user_type"].toString());
+          await Prefs.setString(ConstantStrings.userId, data["response"]["user_id"].toString());
+          await Future.delayed(const Duration(milliseconds: 400));
           if (context.mounted) {
             Navigator.pushNamedAndRemoveUntil(
               context,
