@@ -150,7 +150,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
   Future<void> fetchMembersGroup(FetchGroupMembersEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(fetchmembersLoading: true, groupMembersList: [], fetchMembersError: ""));
-    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId);
+    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId,ownerId: event.ownerId);
 
     response.fold(
       (data) {

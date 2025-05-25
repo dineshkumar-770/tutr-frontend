@@ -16,4 +16,5 @@ class ConstantStrings {
   static const String userToken = "usertokenstring";
   static const String userType = "userTypeKey";
   static const String userId = "userIDKey";
+  static const String private = "private";
 }

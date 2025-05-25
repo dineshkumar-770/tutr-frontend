@@ -1,4 +1,4 @@
-package com.example.tutr_frontend
+package com.tutr.co
 
 import io.flutter.embedding.android.FlutterActivity
 

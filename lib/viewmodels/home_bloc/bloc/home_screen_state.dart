@@ -4,9 +4,11 @@ part of 'home_screen_bloc.dart';
 class HomeScreenState extends Equatable {
   final bool homeScreenLoading;
   final TeacherStudentGroupModel teacherStudentGroupData;
+  final StudentTeacherGroupModel studentTeacherGroupData;
   final String teacherStudentGroupError;
   final bool userProfileLoading;
   final TeacherDataModel teacherData;
+  final StudentProfileModel studentProfileData;
   final String userProfileError;
   final String selectedClass;
   final bool createGroupLoading;
@@ -15,9 +17,11 @@ class HomeScreenState extends Equatable {
   const HomeScreenState({
     required this.homeScreenLoading,
     required this.teacherStudentGroupData,
+    required this.studentTeacherGroupData,
     required this.teacherStudentGroupError,
     required this.userProfileLoading,
     required this.teacherData,
+    required this.studentProfileData,
     required this.userProfileError,
     required this.selectedClass,
     required this.createGroupLoading,
@@ -30,7 +34,9 @@ class HomeScreenState extends Equatable {
         homeScreenLoading: false,
         teacherStudentGroupData: TeacherStudentGroupModel(),
         teacherStudentGroupError: "",
+        studentTeacherGroupData: StudentTeacherGroupModel(),
         teacherData: TeacherDataModel(),
+        studentProfileData: StudentProfileModel(),
         userProfileLoading: false,
         packageInfo: PackageInfo(appName: "", packageName: "", version: "", buildNumber: ""),
         selectedClass: "",
@@ -50,15 +56,19 @@ class HomeScreenState extends Equatable {
         createGroupLoading,
         packageInfo,
         teacherData,
-        selectedClass
+        selectedClass,
+        studentTeacherGroupData,
+        studentProfileData,
       ];
 
   HomeScreenState copyWith({
     bool? homeScreenLoading,
     TeacherStudentGroupModel? teacherStudentGroupData,
+    StudentTeacherGroupModel? studentTeacherGroupData,
     String? teacherStudentGroupError,
     bool? userProfileLoading,
     TeacherDataModel? teacherData,
+    StudentProfileModel? studentProfileData,
     String? userProfileError,
     String? selectedClass,
     bool? createGroupLoading,
@@ -68,9 +78,11 @@ class HomeScreenState extends Equatable {
     return HomeScreenState(
       homeScreenLoading: homeScreenLoading ?? this.homeScreenLoading,
       teacherStudentGroupData: teacherStudentGroupData ?? this.teacherStudentGroupData,
+      studentTeacherGroupData: studentTeacherGroupData ?? this.studentTeacherGroupData,
       teacherStudentGroupError: teacherStudentGroupError ?? this.teacherStudentGroupError,
       userProfileLoading: userProfileLoading ?? this.userProfileLoading,
       teacherData: teacherData ?? this.teacherData,
+      studentProfileData: studentProfileData ?? this.studentProfileData,
       userProfileError: userProfileError ?? this.userProfileError,
       selectedClass: selectedClass ?? this.selectedClass,
       createGroupLoading: createGroupLoading ?? this.createGroupLoading,

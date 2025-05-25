@@ -9,8 +9,11 @@ import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/custom_toast.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/repository/api_calls.dart';
+import 'package:tutr_frontend/models/home_screen_models/student_teacher_group_model.dart';
 import 'package:tutr_frontend/models/home_screen_models/teacher_student_group.dart';
+import 'package:tutr_frontend/models/profile_models/student_profile_model.dart';
 import 'package:tutr_frontend/models/profile_models/teacher_profile_model.dart';
+import 'package:tutr_frontend/utils/helpers.dart';
 
 part 'home_screen_event.dart';
 part 'home_screen_state.dart';
@@ -33,17 +36,29 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       (data) {
         TeacherStudentGroupModel teacherStudentGroupModel = TeacherStudentGroupModel();
         try {
-          teacherStudentGroupModel = TeacherStudentGroupModel.fromJson(data);
-          if (teacherStudentGroupModel.status?.toLowerCase() == ConstantStrings.success.toLowerCase()) {
-            emit(state.copyWith(
+          if (locatorDI<Helper>().getUserType() == ConstantStrings.student) {
+            if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+              StudentTeacherGroupModel studentTeacherGroupModel = StudentTeacherGroupModel.fromJson(data);
+              emit(state.copyWith(
+                  studentTeacherGroupData: studentTeacherGroupModel,
+                  homeScreenLoading: false,
+                  teacherStudentGroupError: ""));
+            } else {
+              emit(state.copyWith(teacherStudentGroupError: data["message"].toString(), homeScreenLoading: false));
+            }
+          } else if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) {
+            if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+              teacherStudentGroupModel = TeacherStudentGroupModel.fromJson(data);
+              emit(state.copyWith(
+                  homeScreenLoading: false,
+                  teacherStudentGroupError: "",
+                  teacherStudentGroupData: teacherStudentGroupModel));
+            } else {
+              emit(state.copyWith(
                 homeScreenLoading: false,
-                teacherStudentGroupError: "",
-                teacherStudentGroupData: teacherStudentGroupModel));
-          } else {
-            emit(state.copyWith(
-                homeScreenLoading: false,
-                teacherStudentGroupError: teacherStudentGroupModel.message,
-                teacherStudentGroupData: teacherStudentGroupModel));
+                teacherStudentGroupError: data["message"].toString(),
+              ));
+            }
           }
         } catch (e) {
           emit(state.copyWith(
@@ -53,7 +68,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         }
       },
       (error) {
-        emit(state.copyWith(teacherStudentGroupError: error));
+        emit(state.copyWith(teacherStudentGroupError: error, homeScreenLoading: false));
       },
     );
   }
@@ -65,15 +80,25 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
 
     response.fold(
       (data) {
-        TeacherDataModel teacherDataModel = TeacherDataModel();
         try {
+          StudentProfileModel studentProfileModel = StudentProfileModel();
+          TeacherDataModel teacherDataModel = TeacherDataModel();
           if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
-            teacherDataModel = TeacherDataModel.fromJson(data);
-            emit(state.copyWith(
-                userProfileError: "",
-                userProfileLoading: false,
-                teacherData: teacherDataModel,
-                packageInfo: packageInfo));
+            if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) {
+              teacherDataModel = TeacherDataModel.fromJson(data);
+              emit(state.copyWith(
+                  userProfileError: "",
+                  userProfileLoading: false,
+                  teacherData: teacherDataModel,
+                  packageInfo: packageInfo));
+            } else if (locatorDI<Helper>().getUserType() == ConstantStrings.student) {
+              studentProfileModel = StudentProfileModel.fromJson(data);
+              emit(state.copyWith(
+                  userProfileError: "",
+                  userProfileLoading: false,
+                  studentProfileData: studentProfileModel,
+                  packageInfo: packageInfo));
+            }
           } else {
             emit(state.copyWith(
                 userProfileError: data["message"].toString(),

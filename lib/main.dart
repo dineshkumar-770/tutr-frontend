@@ -7,6 +7,7 @@ import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/singletons/shared_prefs.dart';
 import 'package:tutr_frontend/routes/app_route_names.dart';
 import 'package:tutr_frontend/routes/app_route_navigations.dart';
+import 'package:tutr_frontend/utils/adeptiveness.dart';
 import 'package:tutr_frontend/utils/bloc_observer.dart';
 import 'package:tutr_frontend/viewmodels/auth_bloc/bloc/auth_bloc.dart';
 import 'package:tutr_frontend/viewmodels/home_bloc/bloc/home_screen_bloc.dart';
@@ -29,12 +30,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SizeConfig.init(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(context: context),
         ),
-        BlocProvider.value(value: locatorDI<HomeScreenBloc>()), 
+        BlocProvider.value(value: locatorDI<HomeScreenBloc>()),
         BlocProvider<TeacherViewGroupBloc>(
           create: (context) => TeacherViewGroupBloc(),
         ),

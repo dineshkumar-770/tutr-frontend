@@ -7,13 +7,16 @@ import 'package:intl/intl.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
+import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/singletons/shared_prefs.dart';
 import 'package:tutr_frontend/models/arguments/class_material_args.dart';
+import 'package:tutr_frontend/models/arguments/student_attendance_screen_args.dart';
 import 'package:tutr_frontend/models/arguments/studnets_list_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_attendance_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_view_group_arguments.dart';
 import 'package:tutr_frontend/routes/app_route_names.dart';
 import 'package:tutr_frontend/themes/styles/custom_text_styles.dart';
+import 'package:tutr_frontend/utils/helpers.dart';
 import 'package:tutr_frontend/viewmodels/teacher_view_group_bloc/bloc/teacher_view_group_bloc.dart';
 
 class TeacherViewGroup extends StatefulWidget {
@@ -71,10 +74,13 @@ class _TeacherViewGroupState extends State<TeacherViewGroup> with TickerProvider
                     Navigator.pushNamed(context, AppRouteNames.studentsScreen,
                         arguments: StudnetsListArgs(
                             className: widget.teacherViewGroupArguments.className,
+                            teacherId: widget.teacherViewGroupArguments.teacherId,
                             groupId: widget.teacherViewGroupArguments.groupId,
                             teacherName: widget.teacherViewGroupArguments.teacherName));
-                    context.read<TeacherViewGroupBloc>().add(
-                        FetchGroupMembersEvent(context: context, groupId: widget.teacherViewGroupArguments.groupId));
+                    context.read<TeacherViewGroupBloc>().add(FetchGroupMembersEvent(
+                        context: context,
+                        groupId: widget.teacherViewGroupArguments.groupId,
+                        ownerId: widget.teacherViewGroupArguments.teacherId));
 
                   case 2:
                     Navigator.pushNamed(context, AppRouteNames.doubtsChatScreen);
@@ -88,20 +94,40 @@ class _TeacherViewGroupState extends State<TeacherViewGroup> with TickerProvider
                         FetchGroupMaterialNotes(context: context, groupId: widget.teacherViewGroupArguments.groupId));
 
                   case 4:
-                    Navigator.pushNamed(context, AppRouteNames.teacherAttendanceScreen,
-                        arguments: TeacherAttendanceArgs(
+                    if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) {
+                      Navigator.pushNamed(context, AppRouteNames.teacherAttendanceScreen,
+                          arguments: TeacherAttendanceArgs(
+                              groupId: widget.teacherViewGroupArguments.groupId,
+                              teacherId: widget.teacherViewGroupArguments.teacherId));
+                      log(Prefs.getString(ConstantStrings.userToken));
+                      context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                          count: 30,
+                          page: 1,
+                          endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                          startDate: DateFormat("dd-MM-yyyy 00:00:00")
+                              .format(DateTime.now().subtract(const Duration(days: 30))),
+                          groupId: widget.teacherViewGroupArguments.groupId,
+                          studentId: null,
+                          teacherId: widget.teacherViewGroupArguments.teacherId));
+                    } else if (locatorDI<Helper>().getUserType() == ConstantStrings.student) {
+                      Navigator.pushNamed(context, AppRouteNames.attendanceStudentView,
+                          arguments: StudentAttendanceScreenArgs(
+                              groupId: widget.teacherViewGroupArguments.groupId,
+                              studentId: Prefs.getString(ConstantStrings.userId),
+                              teacherId: widget.teacherViewGroupArguments.teacherId));
+                      final studentId = Prefs.getString(ConstantStrings.userId);
+                      if (studentId.isNotEmpty) {
+                        context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                            count: 30,
+                            page: 1,
+                            endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                            startDate: DateFormat("dd-MM-yyyy 00:00:00")
+                                .format(DateTime.now().subtract(const Duration(days: 30))),
                             groupId: widget.teacherViewGroupArguments.groupId,
+                            studentId: studentId,
                             teacherId: widget.teacherViewGroupArguments.teacherId));
-                    log(Prefs.getString(ConstantStrings.userToken));
-                    context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
-                        count: 30,
-                        page: 1,
-                        endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
-                        startDate:
-                            DateFormat("dd-MM-yyyy 00:00:00").format(DateTime.now().subtract(const Duration(days: 30))),
-                        groupId: widget.teacherViewGroupArguments.groupId,
-                        studentId: null,
-                        teacherId: widget.teacherViewGroupArguments.teacherId));
+                      }
+                    }
                   default:
                 }
               },

@@ -173,6 +173,7 @@ class ApiCalls {
         return left(decodedData);
       } else {
         try {
+          log(apiResponse.body);
           final errorDecoded = jsonDecode(apiResponse.body);
           final errorMessage = errorDecoded["message"].toString();
           return right(errorMessage);
@@ -327,9 +328,9 @@ class ApiCalls {
     }
   }
 
-  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher({required String groupId}) async {
+  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher({required String groupId,required String ownerId}) async {
     try {
-      String endpoint = "${ApiEndpoints.getGroupMembers}?group_id=$groupId";
+      String endpoint = "${ApiEndpoints.getGroupMembers}?group_id=$groupId&owner_id=$ownerId";
 
       http.Response apiResponse = await HttpHelper.requestGET(url: endpoint, headers: headersWithToken());
 

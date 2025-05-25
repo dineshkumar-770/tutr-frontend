@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:tutr_frontend/models/arguments/invite_memeber_args.dart';
+import 'package:tutr_frontend/models/arguments/student_attendance_screen_args.dart';
+import 'package:tutr_frontend/models/arguments/student_id_card_args.dart';
+import 'package:tutr_frontend/models/arguments/teacher_id_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_view_group_arguments.dart';
 import 'package:tutr_frontend/models/arguments/upload_notes_study_material_args.dart';
 import 'package:tutr_frontend/routes/app_route_names.dart';
 import 'package:tutr_frontend/views/auth_screen/login_screen.dart';
 import 'package:tutr_frontend/views/auth_screen/register_screen.dart';
 import 'package:tutr_frontend/views/home_screen/home_screen.dart';
+import 'package:tutr_frontend/views/profile/student_id_card.dart';
+import 'package:tutr_frontend/views/profile/teacher_id_card.dart';
 import 'package:tutr_frontend/views/root_screen/root_screen.dart';
 import 'package:tutr_frontend/views/splash/splash_screen.dart';
+import 'package:tutr_frontend/views/student_group_view/attendance_student_view.dart';
 import 'package:tutr_frontend/views/teacher_group_view/attendance_groups_all_record.dart';
 import 'package:tutr_frontend/views/teacher_group_view/class_notes_tab.dart';
 import 'package:tutr_frontend/views/teacher_group_view/doubts_chat_tab.dart';
@@ -17,7 +23,7 @@ import 'package:tutr_frontend/views/teacher_group_view/preview_notes.screen.dart
 import 'package:tutr_frontend/views/teacher_group_view/students_list_tab.dart';
 import 'package:tutr_frontend/views/teacher_group_view/take_attendance.dart';
 import 'package:tutr_frontend/views/teacher_group_view/teacher_attendance.dart';
-import 'package:tutr_frontend/views/teacher_group_view/teacher_view_group.dart';
+import 'package:tutr_frontend/views/teacher_group_view/view_group.dart';
 import 'package:tutr_frontend/views/teacher_group_view/upload_notes_screen.dart';
 
 mixin AppRoutesGeneration {
@@ -64,6 +70,15 @@ mixin AppRoutesGeneration {
         ),
     AppRouteNames.attendanceGroupsAllRecordScreen: (context, args) => AttendanceGroupsAllRecordScreen(
           allRecordsArgs: args,
+        ),
+    AppRouteNames.attendanceStudentView: (context, args) => AttendanceStudentView(
+          studentAttendanceScreenArgs: args as StudentAttendanceScreenArgs,
+        ),
+    AppRouteNames.teacherIDCardScreen: (context, args) => TeacherIDCardScreen(
+          teacherIdArgs: args as TeacherIdArgs,
+        ),
+    AppRouteNames.studentIdCardScreen: (context, args) => StudentIdCard(
+          studentIdCardArgs: args as StudentIdCardArgs,
         ),
   };
 

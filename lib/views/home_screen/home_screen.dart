@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
+import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/custom_loading_widget.dart';
+import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/models/arguments/teacher_view_group_arguments.dart';
 import 'package:tutr_frontend/routes/app_route_names.dart';
 import 'package:tutr_frontend/themes/styles/custom_text_styles.dart';
+import 'package:tutr_frontend/utils/helpers.dart';
 import 'package:tutr_frontend/viewmodels/home_bloc/bloc/home_screen_bloc.dart';
 import 'package:tutr_frontend/widgets/home_widgets/group_tile_widget.dart';
 
@@ -43,53 +46,141 @@ class _HomeScreenState extends State<HomeScreen> {
               return Center(
                 child: Text(
                   state.teacherStudentGroupError,
+                  textAlign: TextAlign.center,
                   style: CustomTextStyles.errorTextStyle,
                 ),
               );
-            } else if (state.teacherStudentGroupData.response?.isNotEmpty ?? false) {
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Expanded(
-                      child: ListView.separated(
-                    separatorBuilder: (context, index) => SizedBox(
-                      height: 15,
-                    ),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: state.teacherStudentGroupData.response?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final group = state.teacherStudentGroupData.response?[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, AppRouteNames.teacherViewGroup,
-                              arguments: TeacherViewGroupArguments(
-                                  groupTitle: group?.groupName ?? "",
-                                  groupId: group?.groupId ?? "",
-                                  teacherName: (group?.allMembers != null && (group?.allMembers?.isNotEmpty ?? false))
-                                      ? (group?.allMembers?[0].groupOwnerName ?? "")
-                                      : (group?.groupName ?? ""),
-                                  teacherId: group?.teacherId ?? "",
-                                  className: group?.groupClass ?? ""));
-
-                         
-                        },
-                        child: GroupTileWidget(
-                            circleTitleText: group?.groupName?[0].toUpperCase() ?? "",
-                            title: group?.groupName ?? "",
-                            groupDesc: group?.groupDesc ?? "",
-                            className: group?.groupClass ?? "",
-                            timeStamp: group?.createdAt ?? 0,
-                            totalMembers: (group?.allMembers?.length ?? 0).toString()),
-                      );
-                    },
-                  )),
-                ],
-              );
             } else {
-              return SizedBox();
+              if (locatorDI<Helper>().getUserType() == ConstantStrings.student) {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                        child: ListView.separated(
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 15,
+                      ),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: state.studentTeacherGroupData.response?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final group = state.studentTeacherGroupData.response?[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRouteNames.teacherViewGroup,
+                                arguments: TeacherViewGroupArguments(
+                                    groupTitle: group?.groupName ?? "",
+                                    groupId: group?.groupId ?? "",
+                                    teacherName:
+                                        (group?.groupMembers != null && (group?.groupMembers?.isNotEmpty ?? false))
+                                            ? (group?.groupMembers?[0].groupOwnerName ?? "")
+                                            : (group?.groupName ?? ""),
+                                    teacherId: group?.teacherDetails?.teacherId ?? "",
+                                    className: group?.groupClass ?? ""));
+                          },
+                          child: GroupTileWidget(
+                              circleTitleText: group?.groupName?[0].toUpperCase() ?? "",
+                              title: group?.groupName ?? "",
+                              groupDesc: group?.groupDescription ?? "",
+                              className: group?.groupClass ?? "",
+                              timeStamp: group?.createdAt ?? 0,
+                              totalMembers: (group?.groupMembers?.length ?? 0).toString()),
+                        );
+                      },
+                    )),
+                  ],
+                );
+              } else if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                        child: ListView.separated(
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 15,
+                      ),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: state.teacherStudentGroupData.response?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final group = state.teacherStudentGroupData.response?[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRouteNames.teacherViewGroup,
+                                arguments: TeacherViewGroupArguments(
+                                    groupTitle: group?.groupName ?? "",
+                                    groupId: group?.groupId ?? "",
+                                    teacherName: (group?.allMembers != null && (group?.allMembers?.isNotEmpty ?? false))
+                                        ? (group?.allMembers?[0].groupOwnerName ?? "")
+                                        : (group?.groupName ?? ""),
+                                    teacherId: group?.teacherId ?? "",
+                                    className: group?.groupClass ?? ""));
+                          },
+                          child: GroupTileWidget(
+                              circleTitleText: group?.groupName?[0].toUpperCase() ?? "",
+                              title: group?.groupName ?? "",
+                              groupDesc: group?.groupDesc ?? "",
+                              className: group?.groupClass ?? "",
+                              timeStamp: group?.createdAt ?? 0,
+                              totalMembers: (group?.allMembers?.length ?? 0).toString()),
+                        );
+                      },
+                    )),
+                  ],
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    "Unknown user type has been logged In",
+                    style: CustomTextStyles.errorTextStyle,
+                  ),
+                );
+              }
             }
+            // else if (state.teacherStudentGroupData.response?.isNotEmpty ?? false) {
+            //   return Column(
+            //     children: [
+            //       SizedBox(
+            //         height: 5,
+            //       ),
+            //       Expanded(
+            //           child: ListView.separated(
+            //         separatorBuilder: (context, index) => SizedBox(
+            //           height: 15,
+            //         ),
+            //         physics: const BouncingScrollPhysics(),
+            //         itemCount: state.teacherStudentGroupData.response?.length ?? 0,
+            //         itemBuilder: (context, index) {
+            //           final group = state.teacherStudentGroupData.response?[index];
+            //           return GestureDetector(
+            //             onTap: () {
+            //               Navigator.pushNamed(context, AppRouteNames.teacherViewGroup,
+            //                   arguments: TeacherViewGroupArguments(
+            //                       groupTitle: group?.groupName ?? "",
+            //                       groupId: group?.groupId ?? "",
+            //                       teacherName: (group?.allMembers != null && (group?.allMembers?.isNotEmpty ?? false))
+            //                           ? (group?.allMembers?[0].groupOwnerName ?? "")
+            //                           : (group?.groupName ?? ""),
+            //                       teacherId: group?.teacherId ?? "",
+            //                       className: group?.groupClass ?? ""));
+            //             },
+            //             child: GroupTileWidget(
+            //                 circleTitleText: group?.groupName?[0].toUpperCase() ?? "",
+            //                 title: group?.groupName ?? "",
+            //                 groupDesc: group?.groupDesc ?? "",
+            //                 className: group?.groupClass ?? "",
+            //                 timeStamp: group?.createdAt ?? 0,
+            //                 totalMembers: (group?.allMembers?.length ?? 0).toString()),
+            //           );
+            //         },
+            //       )),
+            //     ],
+            //   );
+            // } else {
+            //   return SizedBox();
+            // }
           },
         ),
       ),

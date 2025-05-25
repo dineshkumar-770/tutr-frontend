@@ -6,6 +6,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tutr_frontend/constants/constant_strings.dart';
+import 'package:tutr_frontend/core/singletons/shared_prefs.dart';
 
 class Helper {
   String formatTimeFronUnixTimeStamp(int time) {
@@ -155,6 +157,19 @@ class Helper {
       }
     } catch (e) {
       return S3URLType.NIL;
+    }
+  }
+
+  String getUserType() {
+    final userType = Prefs.getString(ConstantStrings.userType);
+    switch (userType.toLowerCase()) {
+      case "student":
+        return ConstantStrings.student;
+
+      case "teacher":
+        return ConstantStrings.teacher;
+      default:
+        return "";
     }
   }
 }

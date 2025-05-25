@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:tutr_frontend/constants/app_colors.dart';
+import 'package:tutr_frontend/constants/constant_strings.dart';
+import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/group_members_model.dart';
+import 'package:tutr_frontend/utils/helpers.dart';
 
 class GroupMemberCard extends StatelessWidget {
   final GroupMember member;
-  final Function(TapDownDetails)?  onTap;
+  final Function(TapDownDetails)? onTap;
 
   const GroupMemberCard({
     super.key,
@@ -36,7 +39,9 @@ class GroupMemberCard extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: locatorDI<Helper>().getUserType() == ConstantStrings.teacher
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.center,
                 children: [
                   CircleAvatar(
                     radius: 26,
@@ -57,47 +62,25 @@ class GroupMemberCard extends StatelessWidget {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(
-                          member.studentEmail ?? "N/A",
-                          style: TextStyle(fontSize: 13, color: AppColors.textColor2),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) ...[
+                          Text(
+                            member.studentEmail ?? "N/A",
+                            style: TextStyle(fontSize: 13, color: AppColors.textColor2),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                         SizedBox(height: 8),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: InkWell( onTapDown:onTap , child: Icon(Icons.more_vert)),
-                  )
+                  if (locatorDI<Helper>().getUserType() == ConstantStrings.teacher) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: InkWell(onTapDown: onTap, child: Icon(Icons.more_vert)),
+                    )
+                  ]
                 ],
               ),
-              // Row(
-              //   children: [
-              //     infoRow(Icons.school, member.studentClass),
-              //     Spacer(),
-              //     infoRow(Icons.group, member.groupId),
-              //   ],
-              // ),
-              // SizedBox(height: 8),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     contactInfo("Student", member.studentContact?.toString(), Colors.lightBlueAccent),
-              //     contactInfo("Parent", member.studentParnetsContact?.toString(), Colors.redAccent),
-              //   ],
-              // ),
-
-              // SizedBox(height: 8),
-
-              // // Dates
-              // Row(
-              //   children: [
-              //     infoRow(Icons.date_range, formatTimestamp(member.studentJoinedAt)),
-              //     Spacer(),
-              //     infoRow(Icons.account_circle, formatTimestamp(member.studentAccountCreationDate)),
-              //   ],
-              // ),
             ],
           ),
         ),

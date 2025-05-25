@@ -10,6 +10,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/common/custom_loading_widget.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
+import 'package:tutr_frontend/core/common/transparent_button.dart';
 import 'package:tutr_frontend/core/common/tutr_button.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/models/arguments/attendance_groups_all_records_args.dart';
@@ -34,9 +35,8 @@ class TeacherAttendanceScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context
-              .read<TeacherViewGroupBloc>()
-              .add(FetchGroupMembersEvent(context: context, groupId: teacherAttendanceArgs.groupId));
+          context.read<TeacherViewGroupBloc>().add(FetchGroupMembersEvent(
+              context: context, groupId: teacherAttendanceArgs.groupId, ownerId: teacherAttendanceArgs.teacherId));
           Navigator.pushNamed(context, AppRouteNames.takeAttendanceScreen,
               arguments: TakeAttendanceArgs(groupId: teacherAttendanceArgs.groupId));
         },
@@ -135,29 +135,92 @@ class TeacherAttendanceScreen extends StatelessWidget {
                           ?.isNotEmpty ??
                       false) ...[
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: (state.calenderData[DateTime.parse(
-                                    DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))])
-                                ?.length ??
-                            0,
-                        itemBuilder: (context, index) {
-                          final calEvent = (state.calenderData[DateTime.parse(
-                                  DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))]
-                              ?[index]);
-
-                          return AttendanceCalenderTile(
-                            record: calEvent!.records,
-                            isViewFromAllRecords: false,
-                            
-                          );
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                              count: 30,
+                              page: 1,
+                              endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                              startDate: DateFormat("dd-MM-yyyy 00:00:00")
+                                  .format(DateTime.now().subtract(const Duration(days: 30))),
+                              groupId: teacherAttendanceArgs.groupId,
+                              studentId: null,
+                              teacherId: teacherAttendanceArgs.teacherId));
                         },
+                        child: ListView.builder(
+                          itemCount: (state.calenderData[DateTime.parse(DateFormat("yyyy-MM-dd 00:00:00.000")
+                                      .format(state.selectedDay ?? DateTime.now()))])
+                                  ?.length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final calEvent = (state.calenderData[DateTime.parse(
+                                    DateFormat("yyyy-MM-dd 00:00:00.000").format(state.selectedDay ?? DateTime.now()))]
+                                ?[index]);
+
+                            return AttendanceCalenderTile(
+                              record: calEvent!.records,
+                              isShowingTeacherView: true,
+                              isViewFromAllRecords: false,
+                            );
+                          },
+                        ),
                       ),
                     )
                   ] else ...[
                     Gaps.verticalGap(value: 100),
                     Center(
-                      child: Text(
-                          "No records found on dated ${locatorDI<Helper>().formatDateinDDMMMYYYY(state.selectedDay ?? DateTime.now())}"),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          spacing: 16,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "No records found on dated ${locatorDI<Helper>().formatDateinDDMMMYYYY(state.selectedDay ?? DateTime.now())}",
+                              style: TextStyle(color: AppColors.textColor2, fontSize: 18),
+                              textAlign: TextAlign.center,
+                            ),
+                            Row(
+                              spacing: 10,
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: TransparentButton(
+                                    icon: Icons.schedule,
+                                    onTap: () {
+                                      context.read<TeacherViewGroupBloc>().add(FetchGroupMembersEvent(
+                                          context: context,
+                                          groupId: teacherAttendanceArgs.groupId,
+                                          ownerId: teacherAttendanceArgs.teacherId));
+                                      Navigator.pushNamed(context, AppRouteNames.takeAttendanceScreen,
+                                          arguments: TakeAttendanceArgs(groupId: teacherAttendanceArgs.groupId));
+                                    },
+                                    label: "Mark Today's Attendance",
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: TransparentButton(
+                                    label: "Refresh Records",
+                                    icon: Icons.refresh,
+                                    onTap: () {
+                                      context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                                          count: 30,
+                                          page: 1,
+                                          endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                                          startDate: DateFormat("dd-MM-yyyy 00:00:00")
+                                              .format(DateTime.now().subtract(const Duration(days: 30))),
+                                          groupId: teacherAttendanceArgs.groupId,
+                                          studentId: null,
+                                          teacherId: teacherAttendanceArgs.teacherId));
+                                    },
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ]
                 ],
@@ -177,51 +240,53 @@ class TeacherAttendanceScreen extends StatelessWidget {
           }
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            spacing: 10,
-            children: [
-              TutrPrimaryButton(
-                onPressed: () {
-                  context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
-                      count: 30,
-                      page: 1,
-                      endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
-                      startDate:
-                          DateFormat("dd-MM-yyyy 00:00:00").format(DateTime.now().subtract(const Duration(days: 30))),
-                      groupId: teacherAttendanceArgs.groupId,
-                      studentId: null,
-                      teacherId: teacherAttendanceArgs.teacherId));
-                  Navigator.pushNamed(context, AppRouteNames.attendanceGroupsAllRecordScreen,
-                      arguments: AttendanceGroupsAllRecordsArgs(
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              spacing: 10,
+              children: [
+                TutrPrimaryButton(
+                  onPressed: () {
+                    context.read<TeacherViewGroupBloc>().add(GetAttendanceRecordsEvent(
+                        count: 30,
+                        page: 1,
+                        endDate: DateFormat("dd-MM-yyyy 23:59:59").format(DateTime.now()),
+                        startDate:
+                            DateFormat("dd-MM-yyyy 00:00:00").format(DateTime.now().subtract(const Duration(days: 30))),
                         groupId: teacherAttendanceArgs.groupId,
-                        studentId: "",
-                        teacherId: teacherAttendanceArgs.teacherId,
-                      ));
-                },
-                width: MediaQuery.of(context).size.width / 2,
-                label: "All Records",
-                icon: Icon(
-                  FontAwesomeIcons.list,
-                  color: AppColors.white,
+                        studentId: null,
+                        teacherId: teacherAttendanceArgs.teacherId));
+                    Navigator.pushNamed(context, AppRouteNames.attendanceGroupsAllRecordScreen,
+                        arguments: AttendanceGroupsAllRecordsArgs(
+                          groupId: teacherAttendanceArgs.groupId,
+                          studentId: "",
+                          teacherId: teacherAttendanceArgs.teacherId,
+                        ));
+                  },
+                  width: MediaQuery.of(context).size.width / 2,
+                  label: "All Records",
+                  icon: Icon(
+                    FontAwesomeIcons.list,
+                    color: AppColors.white,
+                  ),
+                  fontSize: 12,
                 ),
-                fontSize: 12,
-              ),
-              TutrPrimaryButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.analytics_outlined,
-                  color: AppColors.white,
-                  size: 22,
+                TutrPrimaryButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.analytics_outlined,
+                    color: AppColors.white,
+                    size: 22,
+                  ),
+                  width: MediaQuery.of(context).size.width / 2,
+                  label: "Analyize Records",
+                  fontSize: 12,
                 ),
-                width: MediaQuery.of(context).size.width / 2,
-                label: "Analyize Records",
-                fontSize: 12,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

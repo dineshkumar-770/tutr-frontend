@@ -2,7 +2,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
@@ -92,12 +91,7 @@ class OtpWidget extends StatelessWidget {
                 context
                     .read<AuthBloc>()
                     .add(VerifyOTPEvent(otp: otpController.text, email: email, loginType: loginType));
-              },
-              icon: Icon(
-                FontAwesomeIcons.arrowRightFromBracket,
-                color: AppColors.buttonTextColor,
-                size: 22,
-              ),
+              }, 
             )
           ],
         );

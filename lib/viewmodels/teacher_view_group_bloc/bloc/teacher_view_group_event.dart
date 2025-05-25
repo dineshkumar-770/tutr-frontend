@@ -63,16 +63,19 @@ class UpdateNoticeBoardEvent extends TeacherViewGroupEvent {
 class FetchGroupMembersEvent extends TeacherViewGroupEvent {
   final String groupId;
   final BuildContext context;
+  final  String ownerId;
 
   const FetchGroupMembersEvent({
     required this.groupId,
     required this.context,
+    required this.ownerId
   });
 
   @override
   List<Object> get props => [
         groupId,
         context,
+        ownerId
       ];
 }
 

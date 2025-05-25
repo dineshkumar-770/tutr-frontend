@@ -1,7 +1,7 @@
 class StudentProfileModel {
   String? status;
   String? message;
-  StudnetProfile? response;
+  Response? response;
 
   StudentProfileModel({
     this.status,
@@ -12,11 +12,11 @@ class StudentProfileModel {
   factory StudentProfileModel.fromJson(Map<String, dynamic> json) => StudentProfileModel(
         status: json["status"],
         message: json["message"],
-        response: StudnetProfile.fromJson(json["response"]),
+        response: Response.fromJson(json["response"]),
       );
 }
 
-class StudnetProfile {
+class Response {
   String? studentId;
   String? fullName;
   String? email;
@@ -26,7 +26,7 @@ class StudnetProfile {
   int? parentsContact;
   String? fullAddress;
 
-  StudnetProfile({
+  Response({
     this.studentId,
     this.fullName,
     this.email,
@@ -37,7 +37,7 @@ class StudnetProfile {
     this.fullAddress,
   });
 
-  factory StudnetProfile.fromJson(Map<String, dynamic> json) => StudnetProfile(
+  factory Response.fromJson(Map<String, dynamic> json) => Response(
         studentId: json["student_id"],
         fullName: json["full_name"],
         email: json["email"],

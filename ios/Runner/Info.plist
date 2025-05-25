@@ -45,5 +45,40 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+    <true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App needs access to photo lib for profile images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>To capture selfies, App needs your camera permission</string>
+
+<key>NSMicrophoneUsageDescription</key>
+<string>your usage description here</string>
+
+	<key>NSBonjourServices</key>
+	<array>
+		<string>${DART_DEBUG_BONJOUR_SERVICE}</string>
+	</array>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+	  <dict>
+	    <key>CFBundleTypeRole</key>
+	    <string>Editor</string>
+	    <key>CFBundleURLSchemes</key>
+	    <array>
+	      <string>com.googleusercontent.apps.658767284886-34j1he21cv72mr6up9sina7nno7b1gqn</string>
+	    </array>
+	  </dict>
+	</array>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	  <string>google</string>
+	  <string>com.googleusercontent.apps.658767284886-34j1he21cv72mr6up9sina7nno7b1gqn</string>
+	</array>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app uses the local network for communication and debugging purposes.</string>
 </dict>
 </plist>

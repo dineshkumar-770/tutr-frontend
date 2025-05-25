@@ -84,6 +84,7 @@ class _AttendanceGroupsAllRecordScreenState extends State<AttendanceGroupsAllRec
                       itemBuilder: (context, index) {
                         return AttendanceCalenderTile(
                           record: state.attendanceRecordsData.response![index],
+                          isShowingTeacherView: true,
                           isViewFromAllRecords: true,
                           onTapMore: (tapDownDetails) async {
                             final value = await teacherViewGroupPopups.showPopUpMenuAttendance(

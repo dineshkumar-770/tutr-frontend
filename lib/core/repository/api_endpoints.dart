@@ -37,7 +37,7 @@ class ApiEndpoints {
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://6356-139-5-253-235.ngrok-free.app";
+      return "https://2f86-122-173-30-9.ngrok-free.app";
     }
     return "";
   }
