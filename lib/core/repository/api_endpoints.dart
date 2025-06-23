@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static String serverName = "Lo";
+  static String serverName = "D";
   static final String _baseURL = getServerUrl(serverName);
   static String registerStudent = "$_baseURL/register_student";
   static String registerTeacher = "$_baseURL/register_teacher";
