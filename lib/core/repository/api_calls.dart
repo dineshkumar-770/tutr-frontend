@@ -34,8 +34,7 @@ class ApiCalls {
     try {
       String endpoint = ApiEndpoints.sendOTPEmail;
       Map<String, dynamic> formValue = {"login_type": loginType, "email": email};
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithoutContentType());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithoutContentType());
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
         return left(decodedData);
@@ -53,13 +52,11 @@ class ApiCalls {
     }
   }
 
-  Future<Either<Map<String, dynamic>, String>> verifyEmailOTP(
-      {required String otp, required String email, required String loginType}) async {
+  Future<Either<Map<String, dynamic>, String>> verifyEmailOTP({required String otp, required String email, required String loginType}) async {
     try {
       String endpoint = ApiEndpoints.verifyOTP;
       Map<String, dynamic> formValues = {"otp": otp, "email": email, "login_type": loginType};
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formValues, headers: headersWithoutContentType());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValues, headers: headersWithoutContentType());
 
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
@@ -104,8 +101,7 @@ class ApiCalls {
         "class_assigned": classAssigned,
         "teacher_code": teacherCode
       };
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithContentType());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithContentType());
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
         return left(decodedData);
@@ -145,8 +141,7 @@ class ApiCalls {
         "parents_contact": int.parse(parentsContact),
         "full_address": address
       };
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithContentType());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithContentType());
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
         return left(decodedData);
@@ -215,13 +210,8 @@ class ApiCalls {
   }) async {
     try {
       String endpoint = ApiEndpoints.createGroup;
-      Map<String, String> formData = {
-        "group_class": groupClass,
-        "group_name": groupName,
-        "group_desc": groupDescription
-      };
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
+      Map<String, String> formData = {"group_class": groupClass, "group_name": groupName, "group_desc": groupDescription};
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
 
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
@@ -248,8 +238,7 @@ class ApiCalls {
     try {
       String endpoint = ApiEndpoints.createGroupNotice;
       Map<String, dynamic> formData = {"group_id": groupId, "title": noticeTitle, "desc": noticeDesc};
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         final decodedData = jsonDecode(apiResponse.body);
         return left(decodedData);
@@ -275,8 +264,7 @@ class ApiCalls {
       Map<String, dynamic> formData = {
         "group_id": groupId,
       };
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);
@@ -296,20 +284,11 @@ class ApiCalls {
   }
 
   Future<Either<Map<String, dynamic>, String>> updateCurrentNoticeBoard(
-      {required String groupId,
-      required String noticeTitle,
-      required String noticeDesc,
-      required String noticeId}) async {
+      {required String groupId, required String noticeTitle, required String noticeDesc, required String noticeId}) async {
     try {
       String endpoint = ApiEndpoints.updateNotice;
-      Map<String, dynamic> formData = {
-        "group_id": groupId,
-        "notice_id": noticeId,
-        "new_desc": noticeDesc,
-        "new_title": noticeTitle
-      };
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
+      Map<String, dynamic> formData = {"group_id": groupId, "notice_id": noticeId, "new_desc": noticeDesc, "new_title": noticeTitle};
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formData, headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);
@@ -328,7 +307,7 @@ class ApiCalls {
     }
   }
 
-  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher({required String groupId,required String ownerId}) async {
+  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher({required String groupId, required String ownerId}) async {
     try {
       String endpoint = "${ApiEndpoints.getGroupMembers}?group_id=$groupId&owner_id=$ownerId";
 
@@ -445,8 +424,7 @@ class ApiCalls {
         "file_urls": filesUrl
       };
 
-      http.Response apiResponse =
-          await HttpHelper.requestDELETE(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requestDELETE(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);
@@ -515,8 +493,7 @@ class ApiCalls {
         "full_address": address
       };
 
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formValue), headers: headersWithToken());
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);
@@ -555,8 +532,7 @@ class ApiCalls {
       if (studentId != null) {
         formData.addAll({"student_id": studentId});
       }
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, headers: headersWithToken(), body: formData);
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, headers: headersWithToken(), body: formData);
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
         final decodedData = jsonDecode(apiResponse.body);
@@ -579,8 +555,7 @@ class ApiCalls {
       {required String attendanceId, required List<Map<String, dynamic>> updatedRecords}) async {
     try {
       String endpoint = "${ApiEndpoints.ediBulkAttendanceRecord}?attendance_id=$attendanceId";
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(updatedRecords), headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(updatedRecords), headers: headersWithToken());
 
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);
@@ -601,19 +576,40 @@ class ApiCalls {
   }
 
   Future<Either<Map<String, dynamic>, String>> saveGroupAttendance(
-      {required String groupID,
-      required String remarks,
-      required List<Map<String, dynamic>> markedAttendanceList}) async {
+      {required String groupID, required String remarks, required List<Map<String, dynamic>> markedAttendanceList}) async {
     try {
       String endpoint = ApiEndpoints.markAttendance;
-      Map<String, dynamic> formData = {
-        "group_id": groupID,
-        "remarks": remarks,
-        "marked_attendance": markedAttendanceList
+      Map<String, dynamic> formData = {"group_id": groupID, "remarks": remarks, "marked_attendance": markedAttendanceList};
+
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> makeNotesVisibleTeacher({required String notesId, required String status}) async {
+    try {
+      String endpoint = ApiEndpoints.markNotesVisible;
+      Map<String, dynamic> formValue = {
+        "notes_id": notesId,
+        "status": status,
       };
 
-      http.Response apiResponse =
-          await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
 
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);

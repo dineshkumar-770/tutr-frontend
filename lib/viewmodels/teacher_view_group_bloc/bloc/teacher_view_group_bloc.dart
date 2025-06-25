@@ -45,6 +45,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<OnSelectedDateEvent>(onSelectedDays);
     on<UpdateBulkRecordsAttendance>(updateBulkAttendances);
     on<InitializeOriginalRecordsList>(initialOriginalRecordsForBulkEdits);
+    on<MakeNotesPublicPrivate>(markNotesAsPublicPrivate);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();
@@ -132,13 +133,11 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
       (data) {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
           emit(state.copyWith(updateNoticeError: "", updateNoticeLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
           add(FetchNoticeForGroupEvent(context: event.context, groupId: event.groupId));
         } else {
           emit(state.copyWith(updateNoticeError: data["message"].toString(), updateNoticeLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
         }
       },
       (err) {
@@ -150,7 +149,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
   Future<void> fetchMembersGroup(FetchGroupMembersEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(fetchmembersLoading: true, groupMembersList: [], fetchMembersError: ""));
-    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId,ownerId: event.ownerId);
+    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId, ownerId: event.ownerId);
 
     response.fold(
       (data) {
@@ -158,22 +157,15 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
           try {
             GroupMemberModel groupMemberModel = GroupMemberModel.fromJson(data);
             if (groupMemberModel.response != null && (groupMemberModel.response?.isNotEmpty ?? false)) {
-              emit(state.copyWith(
-                  fetchMembersError: "", fetchmembersLoading: false, groupMembersList: groupMemberModel.response));
+              emit(state.copyWith(fetchMembersError: "", fetchmembersLoading: false, groupMembersList: groupMemberModel.response));
             }
           } catch (e) {
             emit(state.copyWith(fetchMembersError: e.toString(), fetchmembersLoading: false, groupMembersList: []));
             CustomToast.show(toastType: ToastificationType.error, context: event.context, title: e.toString());
           }
         } else {
-          emit(state.copyWith(
-              fetchMembersError: data["message"] ?? "No group members available",
-              fetchmembersLoading: false,
-              groupMembersList: []));
-          CustomToast.show(
-              toastType: ToastificationType.error,
-              context: event.context,
-              title: data["message"] ?? "No group members available");
+          emit(state.copyWith(fetchMembersError: data["message"] ?? "No group members available", fetchmembersLoading: false, groupMembersList: []));
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"] ?? "No group members available");
         }
       },
       (err) {
@@ -186,16 +178,13 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
   Future<void> pickClassMaterialAttachments(AttachClassMaterialEvent event, Emitter<TeacherViewGroupState> emit) async {
     final isGranded = await _helper.requestStoragePermission(event.context);
     if (isGranded) {
-      FilePickerResult? result = await FilePicker.platform
-          .pickFiles(allowMultiple: true, allowedExtensions: ["jpg", "pdf", "mp4"], type: FileType.custom);
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(allowMultiple: true, allowedExtensions: ["jpg", "pdf", "mp4"], type: FileType.custom);
 
       if (result != null) {
         if (result.files.length > 10) {
           if (event.context.mounted) {
-            CustomToast.show(
-                toastType: ToastificationType.info,
-                context: event.context,
-                title: "You can only pick 10 files at a time!");
+            CustomToast.show(toastType: ToastificationType.info, context: event.context, title: "You can only pick 10 files at a time!");
             return;
           }
         }
@@ -208,8 +197,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
         emit(state.copyWith(attachedFilePathsList: filePathsList));
       } else {
         if (event.context.mounted) {
-          CustomToast.show(
-              toastType: ToastificationType.info, context: event.context, title: "NO file content is picked by user");
+          CustomToast.show(toastType: ToastificationType.info, context: event.context, title: "NO file content is picked by user");
         }
       }
     } else {
@@ -248,12 +236,10 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
       (data) {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
           emit(state.copyWith(uploadNotesLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
         } else {
           emit(state.copyWith(uploadNotesLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
         }
       },
       (error) {
@@ -276,17 +262,14 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
             if (groupNotesMaterialModel.status?.toLowerCase() == ConstantStrings.success.toLowerCase()) {
               List<StudyMaterial> listOfNotesMaterial = groupNotesMaterialModel.response ?? [];
               listOfNotesMaterial.sort((a, b) => (b.uploadedAt ?? 0).compareTo(a.uploadedAt ?? 0));
-              emit(state.copyWith(
-                  groupNotesError: "", getGroupNotesLoading: false, groupNotesMaterialdata: listOfNotesMaterial));
-              CustomToast.show(
-                  toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+              emit(state.copyWith(groupNotesError: "", getGroupNotesLoading: false, groupNotesMaterialdata: listOfNotesMaterial));
+              CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
             } else {
               emit(state.copyWith(
                 groupNotesError: data["message"].toString(),
                 getGroupNotesLoading: false,
               ));
-              CustomToast.show(
-                  toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+              CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
             }
           } catch (e) {
             emit(state.copyWith(groupNotesError: e.toString(), getGroupNotesLoading: false));
@@ -315,8 +298,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
         final indexedMap = _generateLetterIndexMap(result[0] ?? []);
         SuspensionUtil.sortListBySuspensionTag(result[0] ?? []);
         SuspensionUtil.setShowSuspensionStatus(result[0] ?? []);
-        emit(state.copyWith(
-            fetchUserConatcsLoading: false, userContactsData: result[0] ?? [], letterIndexMapForContacts: indexedMap));
+        emit(state.copyWith(fetchUserConatcsLoading: false, userContactsData: result[0] ?? [], letterIndexMapForContacts: indexedMap));
 
         log(state.userContactsData.toString());
       } catch (e) {
@@ -326,10 +308,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     } else {
       emit(state.copyWith(fetchUserConatcsLoading: false));
       if (event.context.mounted) {
-        CustomToast.show(
-            toastType: ToastificationType.warning,
-            context: event.context,
-            title: "Permission denined to access your contacts");
+        CustomToast.show(toastType: ToastificationType.warning, context: event.context, title: "Permission denined to access your contacts");
       }
     }
   }
@@ -345,8 +324,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     return letterIndexMap;
   }
 
-  Future<void> checkStudentExistBeforeInvite(
-      CheckBeforeInviteStudentEvent event, Emitter<TeacherViewGroupState> emit) async {
+  Future<void> checkStudentExistBeforeInvite(CheckBeforeInviteStudentEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(checkStudentInviteLoading: true, inviteErrorMsg: "", inviteTappedIndex: event.tappedIndex));
     final response = await _apiCalls.checkStudentBeforeInvite(
       phoneNumber: event.phoneNumber,
@@ -372,10 +350,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
             if (isMemberAdded) {
               if (event.context.mounted) {
-                CustomToast.show(
-                    toastType: ToastificationType.success,
-                    context: event.context,
-                    title: "Student Invited Successfully");
+                CustomToast.show(toastType: ToastificationType.success, context: event.context, title: "Student Invited Successfully");
               }
               emit(state.copyWith(
                   checkStudentInviteLoading: false,
@@ -384,10 +359,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
                   checkStudentBeforeInviteData: checkStudentBeforeInviteModel));
             } else {
               if (event.context.mounted) {
-                CustomToast.show(
-                    toastType: ToastificationType.error,
-                    context: event.context,
-                    title: "Cannot invite person right now");
+                CustomToast.show(toastType: ToastificationType.error, context: event.context, title: "Cannot invite person right now");
               }
               emit(state.copyWith(
                   checkStudentInviteLoading: false,
@@ -397,9 +369,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
             }
           } else {
             CustomToast.show(
-                toastType: ToastificationType.error,
-                context: event.context,
-                title: checkStudentBeforeInviteModel.message ?? "Something went wrong");
+                toastType: ToastificationType.error, context: event.context, title: checkStudentBeforeInviteModel.message ?? "Something went wrong");
             emit(state.copyWith(
                 checkStudentInviteLoading: false,
                 inviteTappedIndex: event.tappedIndex,
@@ -407,8 +377,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
                 checkStudentBeforeInviteData: checkStudentBeforeInviteModel));
           }
         } else {
-          CustomToast.show(
-              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
           emit(state.copyWith(
               checkStudentInviteLoading: false,
               inviteErrorMsg: data["message"].toString(),
@@ -467,20 +436,17 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
   Future<void> updateBulkAttendances(UpdateBulkRecordsAttendance event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(updateRecordsLoading: true, updateRecordsError: ""));
-    final response = await _apiCalls.editBulkAttendanceRecords(
-        attendanceId: event.attendanceId, updatedRecords: event.updatedRecords);
+    final response = await _apiCalls.editBulkAttendanceRecords(attendanceId: event.attendanceId, updatedRecords: event.updatedRecords);
 
     response.fold(
       (data) {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
           emit(state.copyWith(updateRecordsLoading: false, updateRecordsError: ""));
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
           Navigator.pop(event.context, true);
         } else {
           emit(state.copyWith(updateRecordsLoading: false, updateRecordsError: data["message"]));
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
           Navigator.pop(event.context, true);
         }
       },
@@ -506,23 +472,16 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     response.fold(
       (data) {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
-          emit(state.copyWith(
-              deleteNotesError: "", deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          emit(state.copyWith(deleteNotesError: "", deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
           add(FetchGroupMaterialNotes(context: event.context, groupId: event.groupId));
         } else {
-          emit(state.copyWith(
-              deleteNotesError: data["message"].toString(),
-              deleteNotesIndex: event.selectedNotesIndex,
-              deleteNotesLoading: false));
-          CustomToast.show(
-              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          emit(state.copyWith(deleteNotesError: data["message"].toString(), deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
         }
       },
       (err) {
-        emit(state.copyWith(
-            deleteNotesError: err, deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
+        emit(state.copyWith(deleteNotesError: err, deleteNotesIndex: event.selectedNotesIndex, deleteNotesLoading: false));
         CustomToast.show(toastType: ToastificationType.error, context: event.context, title: err);
       },
     );
@@ -556,18 +515,16 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
   Future<void> saveStudensAttendance(SaveStudensAttendanceEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(saveAttendanceLoading: true, saveAttendanceError: ""));
-    final response = await _apiCalls.saveGroupAttendance(
-        groupID: event.groupId, remarks: event.remarks, markedAttendanceList: event.markedAttendanceList);
+    final response =
+        await _apiCalls.saveGroupAttendance(groupID: event.groupId, remarks: event.remarks, markedAttendanceList: event.markedAttendanceList);
 
     response.fold(
       (data) {
         if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
-          CustomToast.show(
-              toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
           emit(state.copyWith(saveAttendanceError: "", saveAttendanceLoading: false));
         } else {
-          CustomToast.show(
-              toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
           emit(state.copyWith(saveAttendanceError: data["message"].toString(), saveAttendanceLoading: false));
         }
       },
@@ -586,10 +543,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
   }
 
   Future<void> fetchAttendanceRecords(GetAttendanceRecordsEvent event, Emitter<TeacherViewGroupState> emit) async {
-    emit(state.copyWith(
-        fetchAttendanceRecordsLoading: true,
-        attendanceRecordError: "",
-        attendanceRecordsData: GetAttendanceRecordsModel()));
+    emit(state.copyWith(fetchAttendanceRecordsLoading: true, attendanceRecordError: "", attendanceRecordsData: GetAttendanceRecordsModel()));
 
     final response = await _apiCalls.getStudentAttendance(
         groupId: event.groupId,
@@ -650,9 +604,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
             }
           } catch (e) {
             emit(state.copyWith(
-                fetchAttendanceRecordsLoading: false,
-                attendanceRecordError: e.toString(),
-                attendanceRecordsData: attendanceRecordsModel));
+                fetchAttendanceRecordsLoading: false, attendanceRecordError: e.toString(), attendanceRecordsData: attendanceRecordsModel));
           }
         } else {
           emit(state.copyWith(
@@ -662,10 +614,28 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
         }
       },
       (error) {
-        emit(state.copyWith(
-            fetchAttendanceRecordsLoading: false,
-            attendanceRecordError: error,
-            attendanceRecordsData: GetAttendanceRecordsModel()));
+        emit(state.copyWith(fetchAttendanceRecordsLoading: false, attendanceRecordError: error, attendanceRecordsData: GetAttendanceRecordsModel()));
+      },
+    );
+  }
+
+  Future<void> markNotesAsPublicPrivate(MakeNotesPublicPrivate event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(makeNotesPublicPrivateLoading: true, deleteNotesIndex: event.selectedNotesIndex));
+    final response = await _apiCalls.makeNotesVisibleTeacher(notesId: event.notesId, status: event.status);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+        } else {
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+        }
+
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+      },
+      (error) {
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+        CustomToast.show(toastType: ToastificationType.error, context: event.context, title: error);
       },
     );
   }
@@ -677,12 +647,7 @@ class UserContactsList {
     final token = values[1];
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
     final contactsList = await FlutterContacts.getContacts(
-        sorted: true,
-        withPhoto: true,
-        withThumbnail: true,
-        withProperties: true,
-        deduplicateProperties: false,
-        withAccounts: true);
+        sorted: true, withPhoto: true, withThumbnail: true, withProperties: true, deduplicateProperties: false, withAccounts: true);
     List<UserContactsData> userContactList = [];
     String commaSepetratedNumberForMultipleContacts = "";
     try {
@@ -704,8 +669,7 @@ class UserContactsList {
           userContactsData.name = contactsList[i].displayName;
           userContactsData.phoneNumber = commaSepetratedNumberForMultipleContacts;
           userContactsData.profilePic = contactsList[i].photoOrThumbnail;
-          final firstChar =
-              contactsList[i].displayName.trim().isNotEmpty ? contactsList[i].displayName.trim()[0].toUpperCase() : "#";
+          final firstChar = contactsList[i].displayName.trim().isNotEmpty ? contactsList[i].displayName.trim()[0].toUpperCase() : "#";
           userContactsData.tag = RegExp(r'^[A-Z]$').hasMatch(firstChar) ? firstChar : "#";
 
           userContactList.add(userContactsData);

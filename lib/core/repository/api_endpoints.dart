@@ -30,6 +30,7 @@ class ApiEndpoints {
   static String uploadGroupMaterial = "$_baseURL/save_teacher_note";
   static String getGroupMaterialNotes = "$_baseURL/get_all_notes_in_group";
   static String deleteGroupNotes = "$_baseURL/delete_notes";
+  static String markNotesVisible = "$_baseURL/mark_notes_visiblity_status";
 
   static String getServerUrl(String serverType) {
     if (serverType == "L") {
@@ -37,7 +38,7 @@ class ApiEndpoints {
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://2f86-122-173-30-9.ngrok-free.app";
+      return "https://b609-122-173-30-9.ngrok-free.app";
     }
     return "";
   }
