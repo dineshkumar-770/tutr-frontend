@@ -39,6 +39,9 @@ class TeacherViewGroupState extends Equatable {
   final DateTime? selectedDay;
   final bool updateRecordsLoading;
   final String updateRecordsError;
+  final bool doubtPostsLoading;
+  final String doubtPostsGetError;
+  final List<DoubetPost> doubtPostsData;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -78,6 +81,9 @@ class TeacherViewGroupState extends Equatable {
     this.selectedDay,
     required this.updateRecordsLoading,
     required this.updateRecordsError,
+    required this.doubtPostsLoading,
+    required this.doubtPostsGetError,
+    required this.doubtPostsData,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -117,6 +123,9 @@ class TeacherViewGroupState extends Equatable {
       fetchNoticeLoading: false,
       updateRecordsError: "",
       updateRecordsLoading: false,
+      doubtPostsGetError: "",
+      doubtPostsLoading: false,
+      doubtPostsData: [],
       groupNoticeData: GroupNoticeModel());
 
   @override
@@ -158,6 +167,9 @@ class TeacherViewGroupState extends Equatable {
         calenderData,
         updateRecordsLoading,
         updateRecordsError,
+        doubtPostsLoading,
+        doubtPostsGetError,
+        doubtPostsData
       ];
 
   TeacherViewGroupState copyWith({
@@ -198,6 +210,9 @@ class TeacherViewGroupState extends Equatable {
     DateTime? selectedDay,
     bool? updateRecordsLoading,
     String? updateRecordsError,
+    bool? doubtPostsLoading,
+    String? doubtPostsGetError,
+    List<DoubetPost>? doubtPostsData,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -237,6 +252,9 @@ class TeacherViewGroupState extends Equatable {
       selectedDay: selectedDay ?? this.selectedDay,
       updateRecordsLoading: updateRecordsLoading ?? this.updateRecordsLoading,
       updateRecordsError: updateRecordsError ?? this.updateRecordsError,
+      doubtPostsLoading: doubtPostsLoading ?? this.doubtPostsLoading,
+      doubtPostsGetError: doubtPostsGetError ?? this.doubtPostsGetError,
+      doubtPostsData: doubtPostsData ?? this.doubtPostsData,
     );
   }
 }

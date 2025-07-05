@@ -10,6 +10,8 @@ abstract class AppColors {
 
   static Color primaryButtonColor = Colors.black;
   static Color amber = Colors.amber;
+  static Color green = Colors.green;
+  static Color lightGrey = Color(0xffECEDF2);
   static Color primaryColor = Color(0xff5E60CE);
   static Color secondaryColor = Color(0xFFF72585);
   static Color buttonTextColor = Colors.white;

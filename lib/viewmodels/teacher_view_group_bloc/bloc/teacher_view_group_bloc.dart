@@ -14,6 +14,7 @@ import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/custom_toast.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/repository/api_calls.dart';
+import 'package:tutr_frontend/models/doubts/doubts_posts_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/calender_view_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/check_stduent_brfore_invite.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/get_attendance_model.dart';
@@ -45,6 +46,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<OnSelectedDateEvent>(onSelectedDays);
     on<UpdateBulkRecordsAttendance>(updateBulkAttendances);
     on<InitializeOriginalRecordsList>(initialOriginalRecordsForBulkEdits);
+    on<GetDoubtPostsEvent>(fetchGroupPosts);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();
@@ -150,7 +152,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
 
   Future<void> fetchMembersGroup(FetchGroupMembersEvent event, Emitter<TeacherViewGroupState> emit) async {
     emit(state.copyWith(fetchmembersLoading: true, groupMembersList: [], fetchMembersError: ""));
-    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId,ownerId: event.ownerId);
+    final response = await _apiCalls.getGroupMembersTeacher(groupId: event.groupId, ownerId: event.ownerId);
 
     response.fold(
       (data) {
@@ -666,6 +668,38 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
             fetchAttendanceRecordsLoading: false,
             attendanceRecordError: error,
             attendanceRecordsData: GetAttendanceRecordsModel()));
+      },
+    );
+  }
+
+  Future<void> fetchGroupPosts(GetDoubtPostsEvent event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(doubtPostsGetError: "", doubtPostsLoading: true));
+    final response = await _apiCalls.getDoubtPosts(groupId: event.groupId, teacherId: event.teacherId);
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          DoubtPostsModel doubtPostsModel = DoubtPostsModel();
+          try {
+            doubtPostsModel = DoubtPostsModel.fromJson(data);
+            if (doubtPostsModel.response != null && doubtPostsModel.response!.isNotEmpty) {
+              emit(state.copyWith(
+                  doubtPostsLoading: false, doubtPostsData: doubtPostsModel.response, doubtPostsGetError: ""));
+            } else {
+              emit(state.copyWith(
+                  doubtPostsLoading: false,
+                  doubtPostsData: [],
+                  doubtPostsGetError: "No doubts has ben posted yet! Go and post something to get answered."));
+            }
+          } catch (e) {
+            emit(state.copyWith(doubtPostsData: [], doubtPostsGetError: e.toString(), doubtPostsLoading: false));
+          }
+        } else {
+          final errorMessage = data["message"].toString();
+          emit(state.copyWith(doubtPostsGetError: errorMessage, doubtPostsLoading: false, doubtPostsData: []));
+        }
+      },
+      (err) {
+        emit(state.copyWith(doubtPostsGetError: err, doubtPostsLoading: false, doubtPostsData: []));
       },
     );
   }

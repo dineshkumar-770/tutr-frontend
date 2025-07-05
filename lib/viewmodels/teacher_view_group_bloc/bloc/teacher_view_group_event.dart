@@ -63,20 +63,12 @@ class UpdateNoticeBoardEvent extends TeacherViewGroupEvent {
 class FetchGroupMembersEvent extends TeacherViewGroupEvent {
   final String groupId;
   final BuildContext context;
-  final  String ownerId;
+  final String ownerId;
 
-  const FetchGroupMembersEvent({
-    required this.groupId,
-    required this.context,
-    required this.ownerId
-  });
+  const FetchGroupMembersEvent({required this.groupId, required this.context, required this.ownerId});
 
   @override
-  List<Object> get props => [
-        groupId,
-        context,
-        ownerId
-      ];
+  List<Object> get props => [groupId, context, ownerId];
 }
 
 class UploadClassMaterialEvent extends TeacherViewGroupEvent {}
@@ -299,4 +291,13 @@ class InitializeOriginalRecordsList extends TeacherViewGroupEvent {
 
   @override
   List<Object> get props => [originalList];
+}
+
+class GetDoubtPostsEvent extends TeacherViewGroupEvent {
+  final String groupId;
+  final String teacherId;
+
+  const GetDoubtPostsEvent({required this.groupId, required this.teacherId});
+  @override
+  List<Object> get props => [groupId, teacherId];
 }

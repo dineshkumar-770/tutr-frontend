@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static String serverName = "D";
+  static String serverName = "Lo";
   static final String _baseURL = getServerUrl(serverName);
   static String registerStudent = "$_baseURL/register_student";
   static String registerTeacher = "$_baseURL/register_teacher";
@@ -31,13 +31,18 @@ class ApiEndpoints {
   static String getGroupMaterialNotes = "$_baseURL/get_all_notes_in_group";
   static String deleteGroupNotes = "$_baseURL/delete_notes";
 
+  //chats
+  static String insertMessageInChat = "$_baseURL/insert_doubt_chat";
+  static String getDoubtChats = "$_baseURL/get_group_chats";
+  
+
   static String getServerUrl(String serverType) {
     if (serverType == "L") {
       return "https://tutr.co.in";
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://2f86-122-173-30-9.ngrok-free.app";
+      return "https://48aa-160-191-74-216.ngrok-free.app";
     }
     return "";
   }

@@ -270,15 +270,6 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                         fontWeight: FontWeight.bold),
                                                   ),
                                                 )
-                                              // Row(
-                                              //     children: [
-                                              //       Text("This Study Material is marked private by your Teacher"),
-                                              // Icon(
-                                              //   Icons.private_connectivity,
-                                              //   size: 60,
-                                              // )
-                                              //     ],
-                                              //   )
                                               : SingleChildScrollView(
                                                   scrollDirection: Axis.horizontal,
                                                   physics: const BouncingScrollPhysics(),

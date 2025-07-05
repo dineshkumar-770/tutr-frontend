@@ -67,13 +67,38 @@ class GroupTileWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        "• $totalMembers members",
-                        style: TextStyle(color: AppColors.primaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        spacing: 5,
+                        children: [
+                          Icon(
+                            Icons.group,
+                            size: 15,
+                            color: AppColors.primaryColor,
+                          ),
+                          Text(
+                            int.parse(totalMembers) <= 1 ? "$totalMembers member" : "$totalMembers members",
+                            style: TextStyle(color: AppColors.primaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
-                      Text(
-                          "• Created At ${DateFormat("dd MMM, yyyy").format(DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000))}",
-                          style: TextStyle(color: AppColors.primaryColor, fontSize: 12, fontWeight: FontWeight.w500))
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 5,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Icon(
+                            Icons.calendar_month,
+                            size: 15,
+                            color: AppColors.primaryColor,
+                          ),
+                          Text(
+                              "Created At ${DateFormat("dd MMM, yyyy").format(DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000))}",
+                              style:
+                                  TextStyle(color: AppColors.primaryColor, fontSize: 12, fontWeight: FontWeight.w500)),
+                        ],
+                      )
                     ],
                   ),
                   Container(

@@ -328,7 +328,8 @@ class ApiCalls {
     }
   }
 
-  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher({required String groupId,required String ownerId}) async {
+  Future<Either<Map<String, dynamic>, String>> getGroupMembersTeacher(
+      {required String groupId, required String ownerId}) async {
     try {
       String endpoint = "${ApiEndpoints.getGroupMembers}?group_id=$groupId&owner_id=$ownerId";
 
@@ -614,6 +615,75 @@ class ApiCalls {
 
       http.Response apiResponse =
           await HttpHelper.requrestPOST(url: endpoint, body: jsonEncode(formData), headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> postDoubtInChat({
+    required String groupId,
+    required String studentId,
+    required String teacherId,
+    required String doubtText,
+  }) async {
+    try {
+      String endpoint = ApiEndpoints.insertMessageInChat;
+      Map<String, dynamic> formValue = {
+        "group_id": groupId,
+        "student_id": studentId,
+        "teacher_id": teacherId,
+        "text": doubtText,
+      };
+
+      http.Response apiResponse =
+          await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> getDoubtPosts({
+    required String groupId,
+    required String teacherId,
+  }) async {
+    try {
+      //TODO: Implement paginations
+      String endpoint = "${ApiEndpoints.getDoubtChats}?count=20&page=1";
+      Map<String, dynamic> formValue = {
+        "group_id": groupId,
+        "teacher_id": teacherId,
+      };
+
+      http.Response apiResponse =
+          await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
 
       if (apiResponse.statusCode == 200) {
         log(apiResponse.body);

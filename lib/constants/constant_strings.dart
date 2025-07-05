@@ -17,4 +17,5 @@ class ConstantStrings {
   static const String userType = "userTypeKey";
   static const String userId = "userIDKey";
   static const String private = "private";
+  static const String fullName = "userFullName";
 }
