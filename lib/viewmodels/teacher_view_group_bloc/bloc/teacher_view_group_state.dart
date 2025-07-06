@@ -39,6 +39,7 @@ class TeacherViewGroupState extends Equatable {
   final DateTime? selectedDay;
   final bool updateRecordsLoading;
   final String updateRecordsError;
+  final bool makeNotesPublicPrivateLoading;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -78,6 +79,7 @@ class TeacherViewGroupState extends Equatable {
     this.selectedDay,
     required this.updateRecordsLoading,
     required this.updateRecordsError,
+    required this.makeNotesPublicPrivateLoading,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -85,6 +87,7 @@ class TeacherViewGroupState extends Equatable {
       createNoticeError: "",
       fetchNoticError: "",
       updateNoticeError: "",
+      makeNotesPublicPrivateLoading: false,
       uploadNotesLoading: false,
       attendanceRecordError: "",
       attendanceRecordsData: GetAttendanceRecordsModel(),
@@ -158,6 +161,7 @@ class TeacherViewGroupState extends Equatable {
         calenderData,
         updateRecordsLoading,
         updateRecordsError,
+        makeNotesPublicPrivateLoading,
       ];
 
   TeacherViewGroupState copyWith({
@@ -198,6 +202,7 @@ class TeacherViewGroupState extends Equatable {
     DateTime? selectedDay,
     bool? updateRecordsLoading,
     String? updateRecordsError,
+    bool? makeNotesPublicPrivateLoading,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -237,6 +242,7 @@ class TeacherViewGroupState extends Equatable {
       selectedDay: selectedDay ?? this.selectedDay,
       updateRecordsLoading: updateRecordsLoading ?? this.updateRecordsLoading,
       updateRecordsError: updateRecordsError ?? this.updateRecordsError,
+      makeNotesPublicPrivateLoading: makeNotesPublicPrivateLoading ?? this.makeNotesPublicPrivateLoading,
     );
   }
 }

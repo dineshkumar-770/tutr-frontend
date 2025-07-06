@@ -55,9 +55,7 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRouteNames.uploadNotesScreen,
                       arguments: UploadNotesStudyMaterialArgs(
-                          className: widget.classMaterialArgs.className,
-                          groupId: widget.classMaterialArgs.groupId,
-                          subject: ""));
+                          className: widget.classMaterialArgs.className, groupId: widget.classMaterialArgs.groupId, subject: ""));
                 },
                 child: Container(
                   height: 40,
@@ -68,10 +66,7 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                         color: AppColors.primaryColor,
                       ),
                       borderRadius: BorderRadius.circular(200),
-                      boxShadow: [
-                        BoxShadow(
-                            blurRadius: 3, blurStyle: BlurStyle.outer, spreadRadius: 0, color: AppColors.primaryColor)
-                      ]),
+                      boxShadow: [BoxShadow(blurRadius: 3, blurStyle: BlurStyle.outer, spreadRadius: 0, color: AppColors.primaryColor)]),
                   child: Center(
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -110,9 +105,7 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                   return Expanded(
                       child: RefreshIndicator(
                     onRefresh: () async {
-                      context
-                          .read<TeacherViewGroupBloc>()
-                          .add(FetchGroupMaterialNotes(context: context, groupId: widget.classMaterialArgs.groupId));
+                      context.read<TeacherViewGroupBloc>().add(FetchGroupMaterialNotes(context: context, groupId: widget.classMaterialArgs.groupId));
                     },
                     child: ListView.separated(
                       separatorBuilder: (context, index) => Gaps.verticalGap(value: 10),
@@ -145,8 +138,16 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        //Add loading here
                                         if (state.deleteNotesLoading && state.deleteNotesIndex == index) ...[
-                                          LinearProgressIndicator(),
+                                          LinearProgressIndicator(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                        if (state.makeNotesPublicPrivateLoading && state.deleteNotesIndex == index) ...[
+                                          LinearProgressIndicator(
+                                            color: AppColors.primaryColor,
+                                          ),
                                         ],
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,17 +160,12 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                 children: [
                                                   Text(
                                                     "${notes.notesTitle ?? ""} (${notes.notesTopic ?? ""})",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: AppColors.textColor1),
+                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textColor1),
                                                   ),
                                                   Text(
                                                     "• ${notes.notesDesctription ?? ""}",
                                                     textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                        color: AppColors.textColor1.withValues(alpha: 0.75),
-                                                        fontSize: 12),
+                                                    style: TextStyle(color: AppColors.textColor1.withValues(alpha: 0.75), fontSize: 12),
                                                   )
                                                 ],
                                               ),
@@ -180,8 +176,12 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                     final value = await teacherViewGroupPopups.showPopUpMenuNotes(
                                                         context: context,
                                                         position: position.globalPosition,
-                                                        tileWidth: double.maxFinite);
-                                                    if (value != null) {
+                                                        tileWidth: double.maxFinite,
+                                                        markAsType: notes.notesVisiblity.toString().toLowerCase() == ConstantStrings.private
+                                                            ? "Private"
+                                                            : "Public");
+                                                    //makeNotesVisibleTeacher
+                                                    if (value == "1") {
                                                       if (context.mounted) {
                                                         locatorDI<AppPopups>().showGeneralInfoPop(
                                                           context: context,
@@ -191,21 +191,17 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                             TextButton(
                                                                 onPressed: () async {
                                                                   Navigator.pop(context);
-                                                                  await Future.delayed(
-                                                                      const Duration(milliseconds: 200));
+                                                                  await Future.delayed(const Duration(milliseconds: 200));
                                                                   if (context.mounted) {
-                                                                    context.read<TeacherViewGroupBloc>().add(
-                                                                        DeleteClassMaterialEvent(
-                                                                            context: context,
-                                                                            selectedNotesIndex: index,
-                                                                            notesId: notes.notesId ?? "",
-                                                                            groupId: widget.classMaterialArgs.groupId,
-                                                                            notesTitle: notes.notesTitle ?? "",
-                                                                            reason: reasonController.text,
-                                                                            notesDescription:
-                                                                                notes.notesDesctription ?? "",
-                                                                            filesUrl:
-                                                                                notes.attachedFiles?.join(",") ?? ""));
+                                                                    context.read<TeacherViewGroupBloc>().add(DeleteClassMaterialEvent(
+                                                                        context: context,
+                                                                        selectedNotesIndex: index,
+                                                                        notesId: notes.notesId ?? "",
+                                                                        groupId: widget.classMaterialArgs.groupId,
+                                                                        notesTitle: notes.notesTitle ?? "",
+                                                                        reason: reasonController.text,
+                                                                        notesDescription: notes.notesDesctription ?? "",
+                                                                        filesUrl: notes.attachedFiles?.join(",") ?? ""));
                                                                   }
                                                                 },
                                                                 child: const Text("Yes")),
@@ -236,6 +232,16 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                           ],
                                                         );
                                                       }
+                                                    } else if (value == "2") {
+                                                      if (context.mounted) {
+                                                        context.read<TeacherViewGroupBloc>().add(MakeNotesPublicPrivate(
+                                                            context: context,
+                                                            selectedNotesIndex: index,
+                                                            notesId: notes.notesId ?? "",
+                                                            status: notes.notesVisiblity.toString().toLowerCase() == ConstantStrings.private
+                                                                ? ConstantStrings.public.toLowerCase()
+                                                                : ConstantStrings.private.toLowerCase()));
+                                                      }
                                                     }
                                                   },
                                                   child: Icon(Icons.more_vert))
@@ -244,18 +250,14 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                         ),
                                         Gaps.verticalGap(value: 10),
                                         GestureDetector(
-                                          onTap: state.groupNotesMaterialdata[index].notesVisiblity ==
-                                                      ConstantStrings.private &&
+                                          onTap: state.groupNotesMaterialdata[index].notesVisiblity == ConstantStrings.private &&
                                                   locatorDI<Helper>().getUserType() == ConstantStrings.student
                                               ? null
                                               : () {
                                                   Navigator.pushNamed(context, AppRouteNames.previewNotesScreen,
-                                                      arguments: PreviewNotesArgs(
-                                                          notesURL:
-                                                              state.groupNotesMaterialdata[index].attachedFiles ?? []));
+                                                      arguments: PreviewNotesArgs(notesURL: state.groupNotesMaterialdata[index].attachedFiles ?? []));
                                                 },
-                                          child: state.groupNotesMaterialdata[index].notesVisiblity ==
-                                                      ConstantStrings.private &&
+                                          child: state.groupNotesMaterialdata[index].notesVisiblity == ConstantStrings.private &&
                                                   locatorDI<Helper>().getUserType() == ConstantStrings.student
                                               ? ListTile(
                                                   leading: Icon(
@@ -264,21 +266,9 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                   ),
                                                   title: Text(
                                                     "This Study Material is marked private by your Teacher.",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColors.textColor2,
-                                                        fontWeight: FontWeight.bold),
+                                                    style: TextStyle(fontSize: 12, color: AppColors.textColor2, fontWeight: FontWeight.bold),
                                                   ),
                                                 )
-                                              // Row(
-                                              //     children: [
-                                              //       Text("This Study Material is marked private by your Teacher"),
-                                              // Icon(
-                                              //   Icons.private_connectivity,
-                                              //   size: 60,
-                                              // )
-                                              //     ],
-                                              //   )
                                               : SingleChildScrollView(
                                                   scrollDirection: Axis.horizontal,
                                                   physics: const BouncingScrollPhysics(),
@@ -291,29 +281,23 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                                           height: 100,
                                                           width: 80,
                                                           decoration: BoxDecoration(
-                                                              border:
-                                                                  Border.all(width: 1, color: AppColors.primaryColor),
+                                                              border: Border.all(width: 1, color: AppColors.primaryColor),
                                                               borderRadius: BorderRadius.circular(8)),
                                                           child: Stack(
                                                             children: [
-                                                              if (helpers.isImage(
-                                                                  notes.attachedFiles?[fileIndex].noteUrl ?? "")) ...[
+                                                              if (helpers.isImage(notes.attachedFiles?[fileIndex].noteUrl ?? "")) ...[
                                                                 Align(
                                                                   alignment: Alignment.center,
                                                                   child: Container(
                                                                     decoration: BoxDecoration(
                                                                         borderRadius: BorderRadius.circular(8),
                                                                         image: DecorationImage(
-                                                                            image: NetworkImage(notes
-                                                                                    .attachedFiles?[fileIndex]
-                                                                                    .noteUrl ??
-                                                                                ""),
+                                                                            image: NetworkImage(notes.attachedFiles?[fileIndex].noteUrl ?? ""),
                                                                             fit: BoxFit.fill)),
                                                                   ),
                                                                 ),
                                                               ],
-                                                              if (helpers.isPdf(
-                                                                  notes.attachedFiles?[fileIndex].noteUrl ?? "")) ...[
+                                                              if (helpers.isPdf(notes.attachedFiles?[fileIndex].noteUrl ?? "")) ...[
                                                                 Align(
                                                                     alignment: Alignment.center,
                                                                     child: Center(
@@ -336,9 +320,7 @@ class _ClassNotesTabState extends State<ClassNotesTab> {
                                         Text(
                                           "Updated At: ${helpers.formatTimeFronUnixTimeStamp(notes.uploadedAt ?? 0)}",
                                           style: TextStyle(
-                                              color: AppColors.textColor1.withValues(alpha: 0.75),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500),
+                                              color: AppColors.textColor1.withValues(alpha: 0.75), fontSize: 12, fontWeight: FontWeight.w500),
                                         )
                                       ],
                                     ),

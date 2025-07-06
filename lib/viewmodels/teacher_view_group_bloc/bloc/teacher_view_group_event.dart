@@ -44,11 +44,7 @@ class UpdateNoticeBoardEvent extends TeacherViewGroupEvent {
   final BuildContext context;
 
   const UpdateNoticeBoardEvent(
-      {required this.groupId,
-      required this.noticeTitle,
-      required this.noticeDesc,
-      required this.noticeId,
-      required this.context});
+      {required this.groupId, required this.noticeTitle, required this.noticeDesc, required this.noticeId, required this.context});
 
   @override
   List<Object> get props => [
@@ -63,20 +59,12 @@ class UpdateNoticeBoardEvent extends TeacherViewGroupEvent {
 class FetchGroupMembersEvent extends TeacherViewGroupEvent {
   final String groupId;
   final BuildContext context;
-  final  String ownerId;
+  final String ownerId;
 
-  const FetchGroupMembersEvent({
-    required this.groupId,
-    required this.context,
-    required this.ownerId
-  });
+  const FetchGroupMembersEvent({required this.groupId, required this.context, required this.ownerId});
 
   @override
-  List<Object> get props => [
-        groupId,
-        context,
-        ownerId
-      ];
+  List<Object> get props => [groupId, context, ownerId];
 }
 
 class UploadClassMaterialEvent extends TeacherViewGroupEvent {}
@@ -127,8 +115,7 @@ class UploadGroupMaterialEvent extends TeacherViewGroupEvent {
       required this.filePath});
 
   @override
-  List<Object> get props =>
-      [notesTitle, notesDescription, className, notesTopic, subject, visiblity, groupId, isEditable, filePath, context];
+  List<Object> get props => [notesTitle, notesDescription, className, notesTopic, subject, visiblity, groupId, isEditable, filePath, context];
 }
 
 class FetchGroupMaterialNotes extends TeacherViewGroupEvent {
@@ -299,4 +286,21 @@ class InitializeOriginalRecordsList extends TeacherViewGroupEvent {
 
   @override
   List<Object> get props => [originalList];
+}
+
+class MakeNotesPublicPrivate extends TeacherViewGroupEvent {
+  final String notesId;
+  final String status;
+  final BuildContext context;
+  final int selectedNotesIndex;
+
+  const MakeNotesPublicPrivate({
+    required this.notesId,
+    required this.status,
+    required this.context,
+    required this.selectedNotesIndex,
+  });
+
+  @override
+  List<Object> get props => [context, notesId, status, selectedNotesIndex];
 }
