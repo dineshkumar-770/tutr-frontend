@@ -670,6 +670,34 @@ class ApiCalls {
     }
   }
 
+  Future<Either<Map<String, dynamic>, String>> makeNotesVisibleTeacher({required String notesId, required String status}) async {
+    try {
+      String endpoint = ApiEndpoints.markNotesVisible;
+      Map<String, dynamic> formValue = {
+        "notes_id": notesId,
+        "status": status,
+      };
+
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
   Future<Either<Map<String, dynamic>, String>> postADoubtInFeed(
       {required String groupId,
       required String teacherId,

@@ -214,6 +214,28 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     }
   }
 
+  Future<void> markNotesAsPublicPrivate(MakeNotesPublicPrivate event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(makeNotesPublicPrivateLoading: true, deleteNotesIndex: event.selectedNotesIndex));
+    final response = await _apiCalls.makeNotesVisibleTeacher(notesId: event.notesId, status: event.status);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+        } else {
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+        }
+
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+      },
+      (error) {
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+        CustomToast.show(toastType: ToastificationType.error, context: event.context, title: error);
+      },
+    );
+  }
+
+
   void updateAttachments(UpdateAttachmentsEvent event, Emitter<TeacherViewGroupState> emit) {
     List<String> listOfCurrentPaths = List.from(state.attachedFilePathsList);
 

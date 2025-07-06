@@ -37,11 +37,7 @@ class ApiEndpoints {
   static String getDoubtChats = "$_baseURL/get_group_chats";
   static String markSolvedUnsolved = "$_baseURL/mark_sol_unsol";
    
-
-  //chats
-  static String insertMessageInChat = "$_baseURL/insert_doubt_chat";
-  static String getDoubtChats = "$_baseURL/get_group_chats";
-  static String markSolvedUnsolved = "$_baseURL/mark_sol_unsol";
+ 
    
 
   static String getServerUrl(String serverType) {

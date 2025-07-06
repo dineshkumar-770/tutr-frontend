@@ -184,7 +184,7 @@ class TeacherViewGroupState extends Equatable {
         doubtPostsData,
         postDoubtError,
         postDoubtLoading,
-        attachedDoubtFiles
+        attachedDoubtFiles,
         makeNotesPublicPrivateLoading,
       ];
 
