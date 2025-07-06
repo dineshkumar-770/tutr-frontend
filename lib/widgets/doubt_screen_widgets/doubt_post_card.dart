@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
@@ -14,44 +12,6 @@ class DoubtPostCard extends StatelessWidget {
 
   const DoubtPostCard({super.key, required this.doubt});
 
-  void _showImageFullScreen(BuildContext context, String imageUrl) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          backgroundColor: Colors.black,
-          body: PhotoView(
-            imageProvider: NetworkImage(imageUrl),
-            backgroundDecoration: const BoxDecoration(color: Colors.black),
-            minScale: PhotoViewComputedScale.contained,
-            maxScale: PhotoViewComputedScale.covered * 2,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showPDFFullScreen(BuildContext context, String imageUrl) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-            backgroundColor: Colors.black,
-            body: SafeArea(
-              child: SfPdfViewer.network(
-                imageUrl,
-                canShowPasswordDialog: true,
-                interactionMode: PdfInteractionMode.pan,
-                canShowPageLoadingIndicator: true,
-                canShowScrollHead: true,
-                canShowTextSelectionMenu: false,
-                enableTextSelection: false,
-              ),
-            )),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final helpers = locatorDI<Helper>();
@@ -59,9 +19,9 @@ class DoubtPostCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), boxShadow: [
-          BoxShadow(blurRadius: 3, blurStyle: BlurStyle.outer, color: AppColors.black26, spreadRadius: 3)
-        ]),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [BoxShadow(blurRadius: 3, blurStyle: BlurStyle.outer, color: AppColors.black26, spreadRadius: 3)]),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +72,7 @@ class DoubtPostCard extends StatelessWidget {
                         if (helpers.isImage(doubt.attachedFiles?[index].noteUrl ?? "")) {
                           return GestureDetector(
                             onTap: () {
-                              _showImageFullScreen(context, doubt.attachedFiles?[index].noteUrl ?? "");
+                              locatorDI<Helper>().showImageFullScreen(context, doubt.attachedFiles?[index].noteUrl ?? "");
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8),
@@ -127,12 +87,12 @@ class DoubtPostCard extends StatelessWidget {
                                     width: 120,
                                     height: 120,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
+                                      color: AppColors.grey200,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: const Center(
+                                    child:  Center(
                                       child: CircularProgressIndicator(
-                                        color: Colors.blueAccent,
+                                        color: AppColors.primaryColor,
                                       ),
                                     ),
                                   ),
@@ -140,12 +100,12 @@ class DoubtPostCard extends StatelessWidget {
                                     width: 120,
                                     height: 120,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
+                                      color: AppColors.grey200,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: const Icon(
+                                    child:  Icon(
                                       Icons.error_outline,
-                                      color: Colors.redAccent,
+                                      color: AppColors.red,
                                       size: 40,
                                     ),
                                   ),
@@ -156,7 +116,7 @@ class DoubtPostCard extends StatelessWidget {
                         } else if (helpers.isPdf(doubt.attachedFiles?[index].noteUrl ?? "")) {
                           return GestureDetector(
                             onTap: () {
-                              _showPDFFullScreen(context, doubt.attachedFiles?[index].noteUrl ?? "");
+                              locatorDI<Helper>().showPDFFullScreen(context, doubt.attachedFiles?[index].noteUrl ?? "");
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8),
@@ -166,7 +126,7 @@ class DoubtPostCard extends StatelessWidget {
                                   width: 120,
                                   height: 120,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
+                                    color: AppColors.grey200,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Center(
@@ -208,8 +168,7 @@ class DoubtPostCard extends StatelessWidget {
                               ),
                               Text(
                                 "Reply",
-                                style:
-                                    TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
+                                style: TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
                               )
                             ],
                           ),
@@ -230,8 +189,7 @@ class DoubtPostCard extends StatelessWidget {
                               ),
                               Text(
                                 doubt.status?.toLowerCase() == "solved" ? "Solved" : "Mark as Solved",
-                                style:
-                                    TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
+                                style: TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
                               )
                             ],
                           ),
@@ -252,8 +210,7 @@ class DoubtPostCard extends StatelessWidget {
                               ),
                               Text(
                                 "View Post",
-                                style:
-                                    TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
+                                style: TextStyle(color: AppColors.textColor1, fontSize: 12, fontWeight: FontWeight.w400),
                               )
                             ],
                           ),

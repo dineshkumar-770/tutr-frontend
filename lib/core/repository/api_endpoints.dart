@@ -34,7 +34,8 @@ class ApiEndpoints {
   //chats
   static String insertMessageInChat = "$_baseURL/insert_doubt_chat";
   static String getDoubtChats = "$_baseURL/get_group_chats";
-  
+  static String markSolvedUnsolved = "$_baseURL/mark_sol_unsol";
+   
 
   static String getServerUrl(String serverType) {
     if (serverType == "L") {
@@ -42,7 +43,7 @@ class ApiEndpoints {
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://48aa-160-191-74-216.ngrok-free.app";
+      return "https://69dd-139-5-253-115.ngrok-free.app";
     }
     return "";
   }

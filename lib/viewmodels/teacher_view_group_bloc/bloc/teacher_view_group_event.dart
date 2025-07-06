@@ -44,11 +44,7 @@ class UpdateNoticeBoardEvent extends TeacherViewGroupEvent {
   final BuildContext context;
 
   const UpdateNoticeBoardEvent(
-      {required this.groupId,
-      required this.noticeTitle,
-      required this.noticeDesc,
-      required this.noticeId,
-      required this.context});
+      {required this.groupId, required this.noticeTitle, required this.noticeDesc, required this.noticeId, required this.context});
 
   @override
   List<Object> get props => [
@@ -119,8 +115,7 @@ class UploadGroupMaterialEvent extends TeacherViewGroupEvent {
       required this.filePath});
 
   @override
-  List<Object> get props =>
-      [notesTitle, notesDescription, className, notesTopic, subject, visiblity, groupId, isEditable, filePath, context];
+  List<Object> get props => [notesTitle, notesDescription, className, notesTopic, subject, visiblity, groupId, isEditable, filePath, context];
 }
 
 class FetchGroupMaterialNotes extends TeacherViewGroupEvent {
@@ -300,4 +295,42 @@ class GetDoubtPostsEvent extends TeacherViewGroupEvent {
   const GetDoubtPostsEvent({required this.groupId, required this.teacherId});
   @override
   List<Object> get props => [groupId, teacherId];
+}
+
+class PostDoubtInFeedEvent extends TeacherViewGroupEvent {
+  final String groupId;
+  final String teacherId;
+  final String studentId;
+  final String doubtText;
+  final List<String> filePath;
+  final BuildContext context;
+
+  const PostDoubtInFeedEvent(
+      {required this.groupId,
+      required this.teacherId,
+      required this.studentId,
+      required this.doubtText,
+      required this.filePath,
+      required this.context});
+  @override
+  List<Object> get props => [groupId, teacherId, studentId, doubtText, filePath, context];
+}
+
+class AttachDoubtPostMaterial extends TeacherViewGroupEvent {
+  final BuildContext context;
+  final String fileType;
+
+  const AttachDoubtPostMaterial({required this.context,required this.fileType});
+
+  @override
+  List<Object> get props => [context,fileType];
+}
+
+class RemoveDoubtPostFileEvent extends TeacherViewGroupEvent {
+  final String fileNamePath;
+
+  const RemoveDoubtPostFileEvent(this.fileNamePath);
+
+  @override
+  List<Object> get props => [fileNamePath];
 }

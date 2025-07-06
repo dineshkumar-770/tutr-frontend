@@ -42,6 +42,9 @@ class TeacherViewGroupState extends Equatable {
   final bool doubtPostsLoading;
   final String doubtPostsGetError;
   final List<DoubetPost> doubtPostsData;
+  final String postDoubtError;
+  final bool postDoubtLoading;
+  final List<String> attachedDoubtFiles;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -84,6 +87,9 @@ class TeacherViewGroupState extends Equatable {
     required this.doubtPostsLoading,
     required this.doubtPostsGetError,
     required this.doubtPostsData,
+    required this.postDoubtError,
+    required this.postDoubtLoading,
+    required this.attachedDoubtFiles,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -126,6 +132,9 @@ class TeacherViewGroupState extends Equatable {
       doubtPostsGetError: "",
       doubtPostsLoading: false,
       doubtPostsData: [],
+      attachedDoubtFiles: [],
+      postDoubtError: "",
+      postDoubtLoading: false,
       groupNoticeData: GroupNoticeModel());
 
   @override
@@ -169,7 +178,10 @@ class TeacherViewGroupState extends Equatable {
         updateRecordsError,
         doubtPostsLoading,
         doubtPostsGetError,
-        doubtPostsData
+        doubtPostsData,
+        postDoubtError,
+        postDoubtLoading,
+        attachedDoubtFiles
       ];
 
   TeacherViewGroupState copyWith({
@@ -213,6 +225,9 @@ class TeacherViewGroupState extends Equatable {
     bool? doubtPostsLoading,
     String? doubtPostsGetError,
     List<DoubetPost>? doubtPostsData,
+    String? postDoubtError,
+    bool? postDoubtLoading,
+    List<String>? attachedDoubtFiles,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -255,6 +270,9 @@ class TeacherViewGroupState extends Equatable {
       doubtPostsLoading: doubtPostsLoading ?? this.doubtPostsLoading,
       doubtPostsGetError: doubtPostsGetError ?? this.doubtPostsGetError,
       doubtPostsData: doubtPostsData ?? this.doubtPostsData,
+      postDoubtError: postDoubtError ?? this.postDoubtError,
+      postDoubtLoading: postDoubtLoading ?? this.postDoubtLoading,
+      attachedDoubtFiles: attachedDoubtFiles ?? this.attachedDoubtFiles,
     );
   }
 }
