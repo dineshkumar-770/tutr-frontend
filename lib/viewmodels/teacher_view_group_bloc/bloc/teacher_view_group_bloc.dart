@@ -49,6 +49,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<GetDoubtPostsEvent>(fetchGroupPosts);
     on<AttachDoubtPostMaterial>(pickFilesForDoubtPost);
     on<RemoveDoubtPostFileEvent>(removeDoubtPostFile);
+    on<MakeNotesPublicPrivate>(markNotesAsPublicPrivate);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();

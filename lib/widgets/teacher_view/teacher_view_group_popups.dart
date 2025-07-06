@@ -85,8 +85,7 @@ class TeacherViewGroupPopups {
     );
   }
 
-  Future<String?> showPopUpMenu(
-      {required BuildContext context, required Offset position, required double tileWidth}) async {
+  Future<String?> showPopUpMenu({required BuildContext context, required Offset position, required double tileWidth}) async {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     return await showMenu<String>(
@@ -123,7 +122,7 @@ class TeacherViewGroupPopups {
   }
 
   Future<String?> showPopUpMenuNotes(
-      {required BuildContext context, required Offset position, required double tileWidth}) async {
+      {required BuildContext context, required Offset position, required double tileWidth, required String markAsType}) async {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     return await showMenu<String>(
@@ -143,13 +142,20 @@ class TeacherViewGroupPopups {
             style: TextStyle(color: AppColors.textColor1),
           ),
         ),
+        PopupMenuItem(
+          value: "2",
+          child: Text(
+            "Mark as $markAsType",
+            style: TextStyle(color: AppColors.textColor1),
+          ),
+        ),
       ],
     );
   }
   
 
-  Future<String?> showPopUpMenuAttendance(
-      {required BuildContext context, required Offset position, required double tileWidth}) async {
+
+  Future<String?> showPopUpMenuAttendance({required BuildContext context, required Offset position, required double tileWidth}) async {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     return await showMenu<String>(

@@ -45,6 +45,7 @@ class TeacherViewGroupState extends Equatable {
   final String postDoubtError;
   final bool postDoubtLoading;
   final List<String> attachedDoubtFiles;
+  final bool makeNotesPublicPrivateLoading;
 
   const TeacherViewGroupState({
     required this.createNoticeLoading,
@@ -90,6 +91,7 @@ class TeacherViewGroupState extends Equatable {
     required this.postDoubtError,
     required this.postDoubtLoading,
     required this.attachedDoubtFiles,
+    required this.makeNotesPublicPrivateLoading,
   });
 
   factory TeacherViewGroupState.init() => TeacherViewGroupState(
@@ -97,6 +99,7 @@ class TeacherViewGroupState extends Equatable {
       createNoticeError: "",
       fetchNoticError: "",
       updateNoticeError: "",
+      makeNotesPublicPrivateLoading: false,
       uploadNotesLoading: false,
       attendanceRecordError: "",
       attendanceRecordsData: GetAttendanceRecordsModel(),
@@ -182,6 +185,7 @@ class TeacherViewGroupState extends Equatable {
         postDoubtError,
         postDoubtLoading,
         attachedDoubtFiles
+        makeNotesPublicPrivateLoading,
       ];
 
   TeacherViewGroupState copyWith({
@@ -228,6 +232,7 @@ class TeacherViewGroupState extends Equatable {
     String? postDoubtError,
     bool? postDoubtLoading,
     List<String>? attachedDoubtFiles,
+    bool? makeNotesPublicPrivateLoading,
   }) {
     return TeacherViewGroupState(
       createNoticeLoading: createNoticeLoading ?? this.createNoticeLoading,
@@ -273,6 +278,7 @@ class TeacherViewGroupState extends Equatable {
       postDoubtError: postDoubtError ?? this.postDoubtError,
       postDoubtLoading: postDoubtLoading ?? this.postDoubtLoading,
       attachedDoubtFiles: attachedDoubtFiles ?? this.attachedDoubtFiles,
+      makeNotesPublicPrivateLoading: makeNotesPublicPrivateLoading ?? this.makeNotesPublicPrivateLoading,
     );
   }
 }

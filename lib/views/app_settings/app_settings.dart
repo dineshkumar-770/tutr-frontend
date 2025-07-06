@@ -96,16 +96,14 @@ class AppSettings extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Container(
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [
-                        BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)
-                      ]),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)]),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("My ID Card"),
-                          ],
+                          children: [Text("My ID Card"), Icon(Icons.person)],
                         ),
                       ),
                     ),
@@ -114,9 +112,9 @@ class AppSettings extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [
-                      BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)
-                    ]),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)]),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                       child: Row(
@@ -135,35 +133,72 @@ class AppSettings extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [
-                      BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)
-                    ]),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)]),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Build"),
-                          Text(state.packageInfo.buildNumber),
+                          Text("Build", style: TextStyle(color: AppColors.textColor2)),
+                          Text(state.packageInfo.buildNumber, style: TextStyle(color: AppColors.textColor2, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), boxShadow: [
-                      BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)
-                    ]),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)]),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("App Version"),
-                          Text("${state.packageInfo.version}(${ApiEndpoints.serverName})"),
+                          Text("App Version", style: TextStyle(color: AppColors.textColor2)),
+                          Text("${state.packageInfo.version}(${ApiEndpoints.serverName})",
+                              style: TextStyle(color: AppColors.textColor2, fontWeight: FontWeight.bold)),
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    await Prefs.clear();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        AppRouteNames.splashScreen,
+                        (Route<dynamic> route) => false,
+                      );
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [BoxShadow(blurRadius: 2, blurStyle: BlurStyle.outer, spreadRadius: 1, color: AppColors.grey)]),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Logout",
+                              style: TextStyle(color: AppColors.textColor2),
+                            ),
+                            Icon(
+                              Icons.logout,
+                              color: AppColors.textColor2,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -172,29 +207,6 @@ class AppSettings extends StatelessWidget {
             );
           }
         },
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                TutrPrimaryButton(
-                    onPressed: () async {
-                      await Prefs.clear();
-                      if (context.mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          AppRouteNames.splashScreen,
-                          (Route<dynamic> route) => false,
-                        );
-                      }
-                    },
-                    label: "logout")
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

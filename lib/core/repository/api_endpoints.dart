@@ -30,6 +30,13 @@ class ApiEndpoints {
   static String uploadGroupMaterial = "$_baseURL/save_teacher_note";
   static String getGroupMaterialNotes = "$_baseURL/get_all_notes_in_group";
   static String deleteGroupNotes = "$_baseURL/delete_notes";
+  static String markNotesVisible = "$_baseURL/mark_notes_visiblity_status";
+
+  //chats
+  static String insertMessageInChat = "$_baseURL/insert_doubt_chat";
+  static String getDoubtChats = "$_baseURL/get_group_chats";
+  static String markSolvedUnsolved = "$_baseURL/mark_sol_unsol";
+   
 
   //chats
   static String insertMessageInChat = "$_baseURL/insert_doubt_chat";

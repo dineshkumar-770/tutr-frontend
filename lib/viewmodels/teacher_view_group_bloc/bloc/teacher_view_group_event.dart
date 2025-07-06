@@ -334,3 +334,20 @@ class RemoveDoubtPostFileEvent extends TeacherViewGroupEvent {
   @override
   List<Object> get props => [fileNamePath];
 }
+
+class MakeNotesPublicPrivate extends TeacherViewGroupEvent {
+  final String notesId;
+  final String status;
+  final BuildContext context;
+  final int selectedNotesIndex;
+
+  const MakeNotesPublicPrivate({
+    required this.notesId,
+    required this.status,
+    required this.context,
+    required this.selectedNotesIndex,
+  });
+
+  @override
+  List<Object> get props => [context, notesId, status, selectedNotesIndex];
+}
