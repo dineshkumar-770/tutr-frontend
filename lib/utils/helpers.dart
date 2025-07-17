@@ -6,6 +6,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/singletons/shared_prefs.dart';
 
@@ -171,6 +173,44 @@ class Helper {
       default:
         return "";
     }
+  }
+
+   void showImageFullScreen(BuildContext context, String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          body: PhotoView(
+            imageProvider: NetworkImage(imageUrl),
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: PhotoViewComputedScale.covered * 2,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showPDFFullScreen(BuildContext context, String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+            backgroundColor: Colors.black,
+            body: SafeArea(
+              child: SfPdfViewer.network(
+                imageUrl,
+                canShowPasswordDialog: true,
+                interactionMode: PdfInteractionMode.pan,
+                canShowPageLoadingIndicator: true,
+                canShowScrollHead: true,
+                canShowTextSelectionMenu: false,
+                enableTextSelection: false,
+              ),
+            )),
+      ),
+    );
   }
 }
 

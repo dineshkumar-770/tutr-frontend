@@ -32,13 +32,21 @@ class ApiEndpoints {
   static String deleteGroupNotes = "$_baseURL/delete_notes";
   static String markNotesVisible = "$_baseURL/mark_notes_visiblity_status";
 
+  //chats
+  static String insertMessageInChat = "$_baseURL/insert_doubt_chat";
+  static String getDoubtChats = "$_baseURL/get_group_chats";
+  static String markSolvedUnsolved = "$_baseURL/mark_sol_unsol";
+   
+ 
+   
+
   static String getServerUrl(String serverType) {
     if (serverType == "L") {
       return "https://tutr.co.in";
     } else if (serverType == "D") {
       return "http://3.110.40.130:8088";
     } else if (serverType == "Lo") {
-      return "https://b609-122-173-30-9.ngrok-free.app";
+      return "https://69dd-139-5-253-115.ngrok-free.app";
     }
     return "";
   }

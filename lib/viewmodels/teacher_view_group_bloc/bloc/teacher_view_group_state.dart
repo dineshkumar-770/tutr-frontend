@@ -39,6 +39,12 @@ class TeacherViewGroupState extends Equatable {
   final DateTime? selectedDay;
   final bool updateRecordsLoading;
   final String updateRecordsError;
+  final bool doubtPostsLoading;
+  final String doubtPostsGetError;
+  final List<DoubetPost> doubtPostsData;
+  final String postDoubtError;
+  final bool postDoubtLoading;
+  final List<String> attachedDoubtFiles;
   final bool makeNotesPublicPrivateLoading;
 
   const TeacherViewGroupState({
@@ -79,6 +85,12 @@ class TeacherViewGroupState extends Equatable {
     this.selectedDay,
     required this.updateRecordsLoading,
     required this.updateRecordsError,
+    required this.doubtPostsLoading,
+    required this.doubtPostsGetError,
+    required this.doubtPostsData,
+    required this.postDoubtError,
+    required this.postDoubtLoading,
+    required this.attachedDoubtFiles,
     required this.makeNotesPublicPrivateLoading,
   });
 
@@ -120,6 +132,12 @@ class TeacherViewGroupState extends Equatable {
       fetchNoticeLoading: false,
       updateRecordsError: "",
       updateRecordsLoading: false,
+      doubtPostsGetError: "",
+      doubtPostsLoading: false,
+      doubtPostsData: [],
+      attachedDoubtFiles: [],
+      postDoubtError: "",
+      postDoubtLoading: false,
       groupNoticeData: GroupNoticeModel());
 
   @override
@@ -161,6 +179,12 @@ class TeacherViewGroupState extends Equatable {
         calenderData,
         updateRecordsLoading,
         updateRecordsError,
+        doubtPostsLoading,
+        doubtPostsGetError,
+        doubtPostsData,
+        postDoubtError,
+        postDoubtLoading,
+        attachedDoubtFiles,
         makeNotesPublicPrivateLoading,
       ];
 
@@ -202,6 +226,12 @@ class TeacherViewGroupState extends Equatable {
     DateTime? selectedDay,
     bool? updateRecordsLoading,
     String? updateRecordsError,
+    bool? doubtPostsLoading,
+    String? doubtPostsGetError,
+    List<DoubetPost>? doubtPostsData,
+    String? postDoubtError,
+    bool? postDoubtLoading,
+    List<String>? attachedDoubtFiles,
     bool? makeNotesPublicPrivateLoading,
   }) {
     return TeacherViewGroupState(
@@ -242,6 +272,12 @@ class TeacherViewGroupState extends Equatable {
       selectedDay: selectedDay ?? this.selectedDay,
       updateRecordsLoading: updateRecordsLoading ?? this.updateRecordsLoading,
       updateRecordsError: updateRecordsError ?? this.updateRecordsError,
+      doubtPostsLoading: doubtPostsLoading ?? this.doubtPostsLoading,
+      doubtPostsGetError: doubtPostsGetError ?? this.doubtPostsGetError,
+      doubtPostsData: doubtPostsData ?? this.doubtPostsData,
+      postDoubtError: postDoubtError ?? this.postDoubtError,
+      postDoubtLoading: postDoubtLoading ?? this.postDoubtLoading,
+      attachedDoubtFiles: attachedDoubtFiles ?? this.attachedDoubtFiles,
       makeNotesPublicPrivateLoading: makeNotesPublicPrivateLoading ?? this.makeNotesPublicPrivateLoading,
     );
   }

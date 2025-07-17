@@ -142,6 +142,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   maxLength: widget.maxLength,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
+                    suffix: widget.suffix,
+                    suffixIcon: widget.isPasswordField ?? false
+                        ? InkWell(
+                            onTap: () {
+                              setState(() {
+                                showPassword = !showPassword;
+                              });
+                            },
+                            child: Icon(
+                              showPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                              color: const Color(0xFF757575),
+                              size: 22,
+                            ),
+                          )
+                        : Visibility(visible: widget.isPasswordField ?? false, child: const Icon(Icons.abc)),
                     filled: true,
                     fillColor: Color(0xFFE0E4E5),
                     hintText: widget.hint,

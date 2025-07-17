@@ -14,6 +14,7 @@ import 'package:tutr_frontend/constants/constant_strings.dart';
 import 'package:tutr_frontend/core/common/custom_toast.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/repository/api_calls.dart';
+import 'package:tutr_frontend/models/doubts/doubts_posts_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/calender_view_model.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/check_stduent_brfore_invite.dart';
 import 'package:tutr_frontend/models/teacher_view_group_models/get_attendance_model.dart';
@@ -45,6 +46,9 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<OnSelectedDateEvent>(onSelectedDays);
     on<UpdateBulkRecordsAttendance>(updateBulkAttendances);
     on<InitializeOriginalRecordsList>(initialOriginalRecordsForBulkEdits);
+    on<GetDoubtPostsEvent>(fetchGroupPosts);
+    on<AttachDoubtPostMaterial>(pickFilesForDoubtPost);
+    on<RemoveDoubtPostFileEvent>(removeDoubtPostFile);
     on<MakeNotesPublicPrivate>(markNotesAsPublicPrivate);
   }
 
@@ -209,6 +213,28 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
       }
     }
   }
+
+  Future<void> markNotesAsPublicPrivate(MakeNotesPublicPrivate event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(makeNotesPublicPrivateLoading: true, deleteNotesIndex: event.selectedNotesIndex));
+    final response = await _apiCalls.makeNotesVisibleTeacher(notesId: event.notesId, status: event.status);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+        } else {
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+        }
+
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+      },
+      (error) {
+        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
+        CustomToast.show(toastType: ToastificationType.error, context: event.context, title: error);
+      },
+    );
+  }
+
 
   void updateAttachments(UpdateAttachmentsEvent event, Emitter<TeacherViewGroupState> emit) {
     List<String> listOfCurrentPaths = List.from(state.attachedFilePathsList);
@@ -619,25 +645,75 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     );
   }
 
-  Future<void> markNotesAsPublicPrivate(MakeNotesPublicPrivate event, Emitter<TeacherViewGroupState> emit) async {
-    emit(state.copyWith(makeNotesPublicPrivateLoading: true, deleteNotesIndex: event.selectedNotesIndex));
-    final response = await _apiCalls.makeNotesVisibleTeacher(notesId: event.notesId, status: event.status);
-
+  Future<void> fetchGroupPosts(GetDoubtPostsEvent event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(doubtPostsGetError: "", doubtPostsLoading: true));
+    final response = await _apiCalls.getDoubtPosts(groupId: event.groupId, teacherId: event.teacherId);
     response.fold(
       (data) {
-        if (data["status"].toString().toLowerCase() == ConstantStrings.success) {
-          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          DoubtPostsModel doubtPostsModel = DoubtPostsModel();
+          try {
+            doubtPostsModel = DoubtPostsModel.fromJson(data);
+            if (doubtPostsModel.response != null && doubtPostsModel.response!.isNotEmpty) {
+              emit(state.copyWith(doubtPostsLoading: false, doubtPostsData: doubtPostsModel.response, doubtPostsGetError: ""));
+            } else {
+              emit(state.copyWith(
+                  doubtPostsLoading: false,
+                  doubtPostsData: [],
+                  doubtPostsGetError: "No doubts has ben posted yet! Go and post something to get answered."));
+            }
+          } catch (e) {
+            emit(state.copyWith(doubtPostsData: [], doubtPostsGetError: e.toString(), doubtPostsLoading: false));
+          }
         } else {
-          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+          final errorMessage = data["message"].toString();
+          emit(state.copyWith(doubtPostsGetError: errorMessage, doubtPostsLoading: false, doubtPostsData: []));
         }
-
-        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
       },
-      (error) {
-        emit(state.copyWith(makeNotesPublicPrivateLoading: false, deleteNotesIndex: event.selectedNotesIndex));
-        CustomToast.show(toastType: ToastificationType.error, context: event.context, title: error);
+      (err) {
+        emit(state.copyWith(doubtPostsGetError: err, doubtPostsLoading: false, doubtPostsData: []));
       },
     );
+  }
+
+  Future<void> removeDoubtPostFile(RemoveDoubtPostFileEvent event, Emitter<TeacherViewGroupState> emit) async {
+    List<String> filePathsList = List.from(state.attachedDoubtFiles);
+    filePathsList.remove(event.fileNamePath);
+    emit(state.copyWith(attachedDoubtFiles: filePathsList));
+  }
+
+  Future<void> pickFilesForDoubtPost(AttachDoubtPostMaterial event, Emitter<TeacherViewGroupState> emit) async {
+    final isGranded = await _helper.requestStoragePermission(event.context);
+    if (isGranded) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, allowedExtensions: [event.fileType], type: FileType.custom);
+
+      if (result != null) {
+        if (result.files.length > 5) {
+          if (event.context.mounted) {
+            CustomToast.show(toastType: ToastificationType.info, context: event.context, title: "You can only pick 5 files at a time!");
+            return;
+          }
+        }
+        List<String> filePathsList = List.from(state.attachedDoubtFiles);
+
+        for (PlatformFile file in result.files) {
+          filePathsList.add(file.path ?? "");
+        }
+
+        emit(state.copyWith(attachedDoubtFiles: filePathsList));
+      } else {
+        // if (event.context.mounted) {
+        //   CustomToast.show(toastType: ToastificationType.info, context: event.context, title: "No file content is picked by user");
+        // }
+      }
+    } else {
+      if (event.context.mounted) {
+        CustomToast.show(
+            toastType: ToastificationType.warning,
+            context: event.context,
+            title: "Storage permission denied. Kindly open the settings and allow the required permission.");
+      }
+    }
   }
 }
 

@@ -85,13 +85,14 @@ class OtpWidget extends StatelessWidget {
               ]),
             ),
             Gaps.verticalGap(value: 50),
+            
             TutrPrimaryButton(
               label: state.verifyOTPLoading ? "Verifying..." : "Verify",
               onPressed: () {
                 context
                     .read<AuthBloc>()
                     .add(VerifyOTPEvent(otp: otpController.text, email: email, loginType: loginType));
-              }, 
+              },
             )
           ],
         );

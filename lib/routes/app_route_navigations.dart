@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutr_frontend/models/arguments/attendance_groups_all_records_args.dart';
 import 'package:tutr_frontend/models/arguments/class_material_args.dart';
+import 'package:tutr_frontend/models/arguments/doubts_post_arguments.dart';
 import 'package:tutr_frontend/models/arguments/invite_memeber_args.dart';
 import 'package:tutr_frontend/models/arguments/preview_notes_args.dart';
 import 'package:tutr_frontend/models/arguments/student_attendance_screen_args.dart';
@@ -81,7 +82,8 @@ class AppRoutesNavigation with AppRoutesGeneration {
         );
       case AppRouteNames.doubtsChatScreen:
         return CupertinoPageRoute(
-          builder: (context) => routes[AppRouteNames.doubtsChatScreen]!(context, {}),
+          builder: (context) =>
+              routes[AppRouteNames.doubtsChatScreen]!(context, settings.arguments as DoubtsPostArguments),
         );
       case AppRouteNames.classNotesScreen:
         return CupertinoPageRoute(

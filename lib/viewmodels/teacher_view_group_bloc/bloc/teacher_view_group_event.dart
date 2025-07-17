@@ -288,6 +288,53 @@ class InitializeOriginalRecordsList extends TeacherViewGroupEvent {
   List<Object> get props => [originalList];
 }
 
+class GetDoubtPostsEvent extends TeacherViewGroupEvent {
+  final String groupId;
+  final String teacherId;
+
+  const GetDoubtPostsEvent({required this.groupId, required this.teacherId});
+  @override
+  List<Object> get props => [groupId, teacherId];
+}
+
+class PostDoubtInFeedEvent extends TeacherViewGroupEvent {
+  final String groupId;
+  final String teacherId;
+  final String studentId;
+  final String doubtText;
+  final List<String> filePath;
+  final BuildContext context;
+
+  const PostDoubtInFeedEvent(
+      {required this.groupId,
+      required this.teacherId,
+      required this.studentId,
+      required this.doubtText,
+      required this.filePath,
+      required this.context});
+  @override
+  List<Object> get props => [groupId, teacherId, studentId, doubtText, filePath, context];
+}
+
+class AttachDoubtPostMaterial extends TeacherViewGroupEvent {
+  final BuildContext context;
+  final String fileType;
+
+  const AttachDoubtPostMaterial({required this.context,required this.fileType});
+
+  @override
+  List<Object> get props => [context,fileType];
+}
+
+class RemoveDoubtPostFileEvent extends TeacherViewGroupEvent {
+  final String fileNamePath;
+
+  const RemoveDoubtPostFileEvent(this.fileNamePath);
+
+  @override
+  List<Object> get props => [fileNamePath];
+}
+
 class MakeNotesPublicPrivate extends TeacherViewGroupEvent {
   final String notesId;
   final String status;

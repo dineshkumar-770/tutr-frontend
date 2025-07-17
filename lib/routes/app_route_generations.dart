@@ -52,7 +52,9 @@ mixin AppRoutesGeneration {
     AppRouteNames.studentsScreen: (context, args) => StudentsListTab(
           studnetsListArgs: args,
         ),
-    AppRouteNames.doubtsChatScreen: (context, args) => DoubtsChatTab(),
+    AppRouteNames.doubtsChatScreen: (context, args) => DoubtsChatTab(
+      doubtsPostArguments: args,
+    ),
     AppRouteNames.attendanceScreen: (context, args) => NoticeBoardTab(
           groupId: args,
         ),
@@ -80,6 +82,7 @@ mixin AppRoutesGeneration {
     AppRouteNames.studentIdCardScreen: (context, args) => StudentIdCard(
           studentIdCardArgs: args as StudentIdCardArgs,
         ),
+
   };
 
   Map<String, Widget Function(BuildContext, dynamic)> get routes {

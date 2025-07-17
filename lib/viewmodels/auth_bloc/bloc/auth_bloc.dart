@@ -144,6 +144,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await Prefs.setString(ConstantStrings.userToken, data["response"]["token"].toString());
           await Prefs.setString(ConstantStrings.userType, data["response"]["user_type"].toString());
           await Prefs.setString(ConstantStrings.userId, data["response"]["user_id"].toString());
+          await Prefs.setString(ConstantStrings.fullName, data["response"]["full_name"].toString());
           await Future.delayed(const Duration(milliseconds: 400));
           if (context.mounted) {
             Navigator.pushNamedAndRemoveUntil(

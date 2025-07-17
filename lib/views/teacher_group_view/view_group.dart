@@ -10,6 +10,7 @@ import 'package:tutr_frontend/core/common/gap.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/core/singletons/shared_prefs.dart';
 import 'package:tutr_frontend/models/arguments/class_material_args.dart';
+import 'package:tutr_frontend/models/arguments/doubts_post_arguments.dart';
 import 'package:tutr_frontend/models/arguments/student_attendance_screen_args.dart';
 import 'package:tutr_frontend/models/arguments/studnets_list_args.dart';
 import 'package:tutr_frontend/models/arguments/teacher_attendance_args.dart';
@@ -83,7 +84,13 @@ class _TeacherViewGroupState extends State<TeacherViewGroup> with TickerProvider
                         ownerId: widget.teacherViewGroupArguments.teacherId));
 
                   case 2:
-                    Navigator.pushNamed(context, AppRouteNames.doubtsChatScreen);
+                    context.read<TeacherViewGroupBloc>().add(GetDoubtPostsEvent(
+                        groupId: widget.teacherViewGroupArguments.groupId,
+                        teacherId: widget.teacherViewGroupArguments.teacherId));
+                    Navigator.pushNamed(context, AppRouteNames.doubtsChatScreen,
+                        arguments: DoubtsPostArguments(
+                            groupId: widget.teacherViewGroupArguments.groupId,
+                            teacherId: widget.teacherViewGroupArguments.teacherId));
 
                   case 3:
                     Navigator.pushNamed(context, AppRouteNames.classNotesScreen,

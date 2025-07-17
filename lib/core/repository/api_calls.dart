@@ -331,6 +331,8 @@ class ApiCalls {
     }
   }
 
+  
+
   Future<Either<Map<String, dynamic>, String>> saveGroupMaterialNotes(
       {required String notesTitle,
       required String notesDescription,
@@ -601,12 +603,149 @@ class ApiCalls {
     }
   }
 
+  Future<Either<Map<String, dynamic>, String>> postDoubtInChat({
+    required String groupId,
+    required String studentId,
+    required String teacherId,
+    required String doubtText,
+  }) async {
+    try {
+      String endpoint = ApiEndpoints.insertMessageInChat;
+      Map<String, dynamic> formValue = {
+        "group_id": groupId,
+        "student_id": studentId,
+        "teacher_id": teacherId,
+        "text": doubtText,
+      };
+
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> getDoubtPosts({
+    required String groupId,
+    required String teacherId,
+  }) async {
+    try {
+      //TODO: Implement paginations
+      String endpoint = "${ApiEndpoints.getDoubtChats}?count=20&page=1";
+      Map<String, dynamic> formValue = {
+        "group_id": groupId,
+        "teacher_id": teacherId,
+      };
+
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
   Future<Either<Map<String, dynamic>, String>> makeNotesVisibleTeacher({required String notesId, required String status}) async {
     try {
       String endpoint = ApiEndpoints.markNotesVisible;
       Map<String, dynamic> formValue = {
         "notes_id": notesId,
         "status": status,
+      };
+
+      http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());
+
+      if (apiResponse.statusCode == 200) {
+        log(apiResponse.body);
+        final decodedData = jsonDecode(apiResponse.body);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(apiResponse.body);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          return right("Internal Server Error. Error code ${apiResponse.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> postADoubtInFeed(
+      {required String groupId,
+      required String teacherId,
+      required String studentId,
+      required String doubtText,
+      required List<String> filePaths}) async {
+    try {
+      String endpoint = ApiEndpoints.insertMessageInChat;
+      http.MultipartRequest request = http.MultipartRequest('POST', Uri.parse(endpoint));
+      Map<String, String> formValues = {
+        "group_id": groupId,
+        "student_id": studentId,
+        "teacher_id": teacherId,
+        "text": doubtText,
+      };
+      request.fields.addAll(formValues);
+      for (String path in filePaths) {
+        request.files.add(await http.MultipartFile.fromPath('files', path));
+      }
+      request.headers.addAll(headersWithToken());
+      http.StreamedResponse response = await request.send();
+
+      final resp = await response.stream.bytesToString();
+      log(resp);
+      if (response.statusCode == 200) {
+        final decodedData = jsonDecode(resp);
+        return left(decodedData);
+      } else {
+        try {
+          final errorDecoded = jsonDecode(resp);
+          final errorMessage = errorDecoded["message"].toString();
+          return right(errorMessage);
+        } catch (e) {
+          log(response.reasonPhrase.toString());
+          return right("${response.reasonPhrase}. Error code ${response.statusCode}");
+        }
+      }
+    } catch (e) {
+      return right(e.toString());
+    }
+  }
+
+  Future<Either<Map<String, dynamic>, String>> markDoubtSolvedORUnsolved({required String status, required String doubtId}) async {
+    try {
+      String endpoint = ApiEndpoints.markSolvedUnsolved;
+      Map<String, dynamic> formValue = {
+        "status": status,
+        "doubt_id": doubtId,
       };
 
       http.Response apiResponse = await HttpHelper.requrestPOST(url: endpoint, body: formValue, headers: headersWithToken());

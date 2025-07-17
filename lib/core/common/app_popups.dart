@@ -34,6 +34,36 @@ class AppPopups {
     );
   }
 
+  Future<String?> showAttachmentsPopUp({
+    required BuildContext context,
+    required Offset position,
+  }) async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    final double yOffset = position.dy + MediaQuery.of(context).size.height;
+
+    return await showMenu<String>(
+      context: context,
+      color: Colors.white,
+      position: RelativeRect.fromLTRB(
+        position.dx, // from left
+        yOffset, // from top
+        overlay.size.width, // to right
+        overlay.size.height, // to bottom
+      ),
+      items: [
+        PopupMenuItem(
+          value: "1",
+          child: Text("File"),
+        ),
+        PopupMenuItem(
+          value: "2",
+          child: Text("Image"),
+        ),
+      ],
+    );
+  }
+
   Future<bool?> showEditAttendanceSheet(
       {required BuildContext context, required List<Attendance> studentsList, required String attendanceID}) async {
     final height = MediaQuery.of(context).size.height * 0.6;
