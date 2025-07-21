@@ -52,6 +52,19 @@
 	<key>NSCameraUsageDescription</key>
 	<string>To capture selfies, App needs your camera permission</string>
 
+	<key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsArbitraryLoads</key> <true/>
+  </dict>
+<key>io.flutter.embedded_views_preview</key> <true/> 
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>https</string>
+    <string>http</string>
+    <string>tel</string>
+    <string>mailto</string>
+</array>
+
 <key>NSMicrophoneUsageDescription</key>
 <string>your usage description here</string>
 

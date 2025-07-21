@@ -50,6 +50,7 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
     on<AttachDoubtPostMaterial>(pickFilesForDoubtPost);
     on<RemoveDoubtPostFileEvent>(removeDoubtPostFile);
     on<MakeNotesPublicPrivate>(markNotesAsPublicPrivate);
+    on<PostDoubtInFeedEvent>(postDoubtIntoTheFeed);
   }
 
   final ApiCalls _apiCalls = locatorDI<ApiCalls>();
@@ -234,7 +235,6 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
       },
     );
   }
-
 
   void updateAttachments(UpdateAttachmentsEvent event, Emitter<TeacherViewGroupState> emit) {
     List<String> listOfCurrentPaths = List.from(state.attachedFilePathsList);
@@ -714,6 +714,29 @@ class TeacherViewGroupBloc extends Bloc<TeacherViewGroupEvent, TeacherViewGroupS
             title: "Storage permission denied. Kindly open the settings and allow the required permission.");
       }
     }
+  }
+
+  Future<void> postDoubtIntoTheFeed(PostDoubtInFeedEvent event, Emitter<TeacherViewGroupState> emit) async {
+    emit(state.copyWith(postDoubtLoading: true, postDoubtError: ""));
+
+    final response = await _apiCalls.postADoubtInFeed(
+        groupId: event.groupId, teacherId: event.teacherId, studentId: event.studentId, doubtText: event.doubtText, filePaths: event.filePath);
+
+    response.fold(
+      (data) {
+        if (data["status"].toString().toLowerCase() == ConstantStrings.success.toLowerCase()) {
+          emit(state.copyWith(postDoubtError: "", postDoubtLoading: false));
+          CustomToast.show(toastType: ToastificationType.success, context: event.context, title: data["message"].toString());
+        } else {
+          emit(state.copyWith(postDoubtError: data["message"].toString(), postDoubtLoading: false));
+          CustomToast.show(toastType: ToastificationType.error, context: event.context, title: data["message"].toString());
+        }
+      },
+      (err) {
+        emit(state.copyWith(postDoubtError: err, postDoubtLoading: false));
+        CustomToast.show(toastType: ToastificationType.error, context: event.context, title: err);
+      },
+    );
   }
 }
 

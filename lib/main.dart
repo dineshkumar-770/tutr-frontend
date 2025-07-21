@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; 
 import 'package:toastification/toastification.dart';
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
@@ -13,7 +13,7 @@ import 'package:tutr_frontend/viewmodels/auth_bloc/bloc/auth_bloc.dart';
 import 'package:tutr_frontend/viewmodels/home_bloc/bloc/home_screen_bloc.dart';
 import 'package:tutr_frontend/viewmodels/teacher_view_group_bloc/bloc/teacher_view_group_bloc.dart';
 
-void main() async {
+void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
   initializeLocationDI();
   Bloc.observer = MyBlocObserver();

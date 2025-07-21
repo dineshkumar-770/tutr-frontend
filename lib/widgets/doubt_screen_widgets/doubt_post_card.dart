@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
 import 'package:tutr_frontend/constants/app_colors.dart';
 import 'package:tutr_frontend/core/common/gap.dart';
+import 'package:tutr_frontend/core/common/markdown_widget.dart';
 import 'package:tutr_frontend/core/di/locator_di.dart';
 import 'package:tutr_frontend/models/doubts/doubts_posts_model.dart';
 import 'package:tutr_frontend/utils/helpers.dart';
@@ -55,7 +56,8 @@ class DoubtPostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
               ),
-              child: Text(
+              child:  
+              Text(
                 doubt.doubtText ?? "",
                 style: TextStyle(color: AppColors.textColor1),
               ),
@@ -90,7 +92,7 @@ class DoubtPostCard extends StatelessWidget {
                                       color: AppColors.grey200,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child:  Center(
+                                    child: Center(
                                       child: CircularProgressIndicator(
                                         color: AppColors.primaryColor,
                                       ),
@@ -103,7 +105,7 @@ class DoubtPostCard extends StatelessWidget {
                                       color: AppColors.grey200,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child:  Icon(
+                                    child: Icon(
                                       Icons.error_outline,
                                       color: AppColors.red,
                                       size: 40,
